@@ -1,6 +1,6 @@
 const { google } = require('googleapis')
 const { OAuth2 } = google.auth
-const credentials = require('./acc.json');
+const credentials = require('./Credentials.json');
 
 // console.log(credentials.clientID);
 const oAuth2Client = new OAuth2(

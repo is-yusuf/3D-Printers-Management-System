@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel=Stylesheet type="text/css" href="/views/style.css">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <form action="">
+        <div class='print-size'>
+            <h2>Print size in inches</h2>
+            <input type="radio" id="4" name="lessthan4" value="lessthan4">
+            <label for="lessthan4"> size < 4*4*4 </label>
+                    <br>
+                    <input type="radio" id="4to9" name="4to9" value="between4and9">
+                    <label for="between4and9"> 4*4*4 < size < 9*9*9 </label>
+                            <br>
+                            <input type="radio" id="morethan9" name="morethan9" value="morethan9">
+                            <label for="between4and9"> 9*9*9 < size </label>
+        </div>
+
+        <div class='print-time'>
+            <h2>Print time in hours</h2>
+            <input type="text" id="printTime">
+        </div>
+        <div class="date">
+            <input type="date" name="date">
+            <label for="date"> please enter a date</label>
+        </div>
+        <div class="material">
+            <h2>material used</h2>
+            <input type="radio" id="PLA" name="PLA" value="PLA" checked="checked">
+            <label for="PLA"> PLA (preferred) </label>
+            <br>
+            <input type="radio" id="PETG" name="PETG" value="PETG">
+            <label for="PETG"> PETG </label>
+            <br>
+            <input type="radio" id="TPM" name="TPM" value="TPM">
+            <label for="TPM"> TPM </label>
+            <br>
+            <input type="radio" id="ABS" name="ABS" value="ABS">
+            <label for="ABS"> ABS </label>
+
+        </div>
+
+        <button type="button" id="submit">submit</button>
+
+    </form>
+    <h1 id=output>The printer you should use is: </h1>
+    <script src="main.js">
+
+    </script>
+
+</body>
+
+</html>

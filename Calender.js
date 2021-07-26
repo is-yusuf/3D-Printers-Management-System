@@ -2,25 +2,16 @@ const { google } = require('googleapis')
 const { OAuth2 } = google.auth
 const credentials = require('./Credentials.json');
 
-// console.log(credentials.clientID);
 const oAuth2Client = new OAuth2(
     credentials.clientID,
     credentials.clientSecret
 )
-
 oAuth2Client.setCredentials({
     refresh_token: '1//04YA_tHCNgrwfCgYIARAAGAQSNwF-L9IrWYRtinxD0fWUEYIcsq1zdX9VoYXk3fOcqBsMlPAqxpxfDEsBj3kpjN7GYd6M93yApRU',
 })
-
 const calendar = google.calendar({ version: 'v3', auth: oAuth2Client })
-
 const eventStartTime = new Date()
-console.log(eventStartTime);
-eventStartTime.setDate(eventStartTime.getDay() + 2)
-
-// Create a new event end date instance for temp uses in our calendar.
 const eventEndTime = new Date()
-eventEndTime.setDate(eventEndTime.getDay() + 4)
 eventEndTime.setMinutes(eventEndTime.getMinutes() + 45)
 
 const event = {
@@ -30,14 +21,13 @@ const event = {
     colorId: 1,
     start: {
         dateTime: eventStartTime,
-        timeZone: 'America/Denver',
+        timeZone: 'America/Chicago',
     },
     end: {
         dateTime: eventEndTime,
-        timeZone: 'America/Denver',
+        timeZone: 'America/Chicago',
     },
 }
-
 calendar.freebusy.query(
     {
         resource: {

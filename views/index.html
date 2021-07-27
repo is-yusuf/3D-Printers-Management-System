@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel=Stylesheet type="text/css" href="style.css">
+    <title>Document</title>
+
+</head>
+
+<body>
+
+    <form action="" id="form" method="GET">
+        <div class='print-size'>
+            <label for="size">Size in inches</label>
+            <select name="size" id="size">
+                <option value="less4"> size &lt 4 </option>
+                <option value="4to9"> 4 &gt size &lt 9 </option>
+                <option value="more9"> 9 &gt size </option>
+
+            </select>
+        </div>
+        <div class="material">
+            <label for="material">material</label>
+            <select name="material" id="material">
+                <option value="PLA" checked> PLA (Prefereed) </option>
+                <option value="PETG"> PETG </option>
+                <option value="TPM"> TPM </option>
+                <option value="ABS"> ABS </option>
+
+            </select>
+
+
+        </div>
+        <button type="button" id="submit">submit</button>
+    </form>
+    <div>
+        <p id="printer"></p>
+        <img src="" alt="" id="printerimg">
+    </div>
+
+    <form action="/checking" id="schedule" method="POST">
+        <div class='print-time'>
+            <label for="time"> printing duration</label>
+            <input type="text" id="duration" name="time" placeholder="in minutes">
+        </div>
+        <div class="date">
+            <label for="date"> please enter a date</label>
+            <input type="date" name="date" id="date">
+        </div>
+        <button type="button" id="check">check schedule</button>
+        <button type="button" id="schedule" onclick="schedule()">schedule</button>
+    </form>
+
+    <h1 id=output>The printer you should use is: </h1>
+
+
+</body>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+
+<script src="./scripts.js"></script>
+
+</html>

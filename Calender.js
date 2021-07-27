@@ -1,20 +1,21 @@
 class cal {
     constructor() {
-        const { google } = import("googleapis");
-        const { OAuth2 } = import("google.auth");
+        const { google } = require('googleapis')
 
-        const credentials = import("./assets/Credentials.json");
+        // Require oAuth2 from our google instance.
+        const { OAuth2 } = google.auth;
+        const credentials = require("./views/assets/Credentials.json");
+
+        // Create a new instance of oAuth and set our Client ID & Client Secret.
+        const oAuth2Client = new OAuth2(credentials.clientID, credentials.clientSecret);
 
 
-        const oAuth2Client = new OAuth2(
-            credentials.clientID,
-            credentials.clientSecret
-        )
+
+        const calendar = google.calendar({ version: 'v3', auth: oAuth2Client })
+
         oAuth2Client.setCredentials({
             refresh_token: '1//04YA_tHCNgrwfCgYIARAAGAQSNwF-L9IrWYRtinxD0fWUEYIcsq1zdX9VoYXk3fOcqBsMlPAqxpxfDEsBj3kpjN7GYd6M93yApRU',
         })
-        const calendar = google.calendar({ version: 'v3', auth: oAuth2Client })
-
         // const eventStartTime = new Date()
         // const eventEndTime = new Date()
         // eventEndTime.setMinutes(eventEndTime.getMinutes() + 45)
@@ -84,5 +85,4 @@ class cal {
     }
 }
 
-export { cal };
-// exports.cal = cal;
+exports.cal = cal;

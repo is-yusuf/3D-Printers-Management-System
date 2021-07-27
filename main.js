@@ -1,22 +1,28 @@
-import { cal } from "./Calender.js";
+const { json } = require('body-parser');
+const express = require('express');
+const app = express();
+app.use(express.urlencoded({ extended: true }));
+app.set("view engine", "ejs")
+const { cal } = require("./Calender");
+app.use(express.static(__dirname + '/views'));
+app.use(express.json());
 
+
+
+const com = require("./views/com.json");
 const calender = new cal();
-oAuth2Client.setCredentials({
-    refresh_token: '1//04YA_tHCNgrwfCgYIARAAGAQSNwF-L9IrWYRtinxD0fWUEYIcsq1zdX9VoYXk3fOcqBsMlPAqxpxfDEsBj3kpjN7GYd6M93yApRU',
+
+app.get("/", (req, res) => {
+    res.render("index.html");
+})
+app.post("/checking", (req, res) => {
+    console.log(req.body);
+    res.json({ dataToSend: 'stuf' })
 })
 
-function DisplayResults() {
-    let material = document.getElementById('material').value
-    let size = document.getElementById('size').value
-    // do the calculation using data collected
-    let output = document.getElementById('printer');
-    let image = document.getElementById('printerimg');
-    output.innerHTML = "this is a placeholder for the printer";
-    image.src = "./assets/oofa.png";
-}
+app.post("/check", (req, res) => {
+    console.log(req.body);
+    res.send({ test: "test" })
+})
 
-function checkSchedule() {
-    let date = document.getElementById('date').value
-    let duration = document.getElementById('duration').value
-    console.log(date);
-}
+app.listen(5500, () => { console.log("listening on port 5500") });

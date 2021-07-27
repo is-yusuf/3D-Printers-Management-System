@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel=Stylesheet type="text/css" href="style.css">
     <title>Document</title>
+    <script src="main.js" type="module">
+
+    </script>
 </head>
 
 <body>
@@ -21,39 +24,45 @@
 
             </select>
         </div>
+        <div class="material">
+            <label for="material">material</label>
+            <select name="material" id="material">
+                <option value="PLA" checked> PLA (Prefereed) </option>
+                <option value="PETG"> PETG </option>
+                <option value="TPM"> TPM </option>
+                <option value="ABS"> ABS </option>
+
+            </select>
+
+
+        </div>
+        <button type="button" id="submit" onclick="DisplayResults()">submit</button>
+    </form>
+    <div>
+        <p id="printer"></p>
+        <img src="" alt="" id="printerimg">
+    </div>
+
+    <form action="" id "schedule" method="POST">
         <div class='print-time'>
             <label for="time"> printing duration</label>
-            <input type="text" id="time" name"time">
+            <input type="text" id="duration" name"time" placeholder="in minutes">
         </div>
         <div class="date">
             <label for="date"> please enter a date</label>
             <input type="date" name="date" id="date">
         </div>
-        <div class="material">
-            <h2>material used</h2>
-            <input type="radio" id="PLA" name="PLA" value="PLA" checked="checked">
-            <label for="PLA"> PLA (preferred) </label>
-            <br>
-            <input type="radio" id="PETG" name="PETG" value="PETG">
-            <label for="PETG"> PETG </label>
-            <br>
-            <input type="radio" id="TPM" name="TPM" value="TPM">
-            <label for="TPM"> TPM </label>
-            <br>
-            <input type="radio" id="ABS" name="ABS" value="ABS">
-            <label for="ABS"> ABS </label>
-
-        </div>
+        <button type="button" id="check" onclick="checkSchedule()">check schedule</button>
+        <button type="button" id="schedule" onclick="schedule()">schedule</button>
+    </form>
 
 
 
-        <button type="button" id="submit" onclick="DisplayResults()">submit</button>
+
 
     </form>
     <h1 id=output>The printer you should use is: </h1>
-    <script src="main.js">
 
-    </script>
 
 </body>
 

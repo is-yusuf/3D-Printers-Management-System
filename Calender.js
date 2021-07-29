@@ -36,26 +36,14 @@ class cal {
     }
 
     async freeBusyStatus(date, duration) {
-        // console.log("just entered program");
         const startDate = new Date(date)
         const endDate = new Date(date);
-        // endDate.setDate()
-        endDate.setMinutes(endDate.getMinutes() + duration + 1);
+        endDate.setMinutes(endDate.getMinutes() + duration);
         this.check.resource.timeMin = startDate;
         this.check.resource.timeMax = endDate;
-        // console.log(this.check)
-
-        await this.getEvents().then((res) => {
-            this.empty = res;
-            // console.log({ res })
-        })
-        return this.empty;
-    }
-
-
-    async getEvents() {
         let _this = this;
-        await _this.calendar.freebusy.query(this.check, function (err, response) {
+
+        return await this.calendar.freebusy.query(this.check, function (err, response) {
             console.log("making the query")
             if (err) { console.log('error: ' + err) }
             else {
@@ -63,14 +51,20 @@ class cal {
                 console.log({ eventArr })
                 if (eventArr.length == 0) {
                     _this.empty = true;
+                    // return true
                 }
                 else {
                     _this.empty = false;
+                    // return false
                 }
             }
+            console.log({ key: _this.empty })
+
+            return _this.empty;
+
         })
-        return this.empty
     }
+
 
 
     schedule(startDate, duration) {

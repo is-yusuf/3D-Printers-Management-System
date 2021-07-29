@@ -1,74 +1,81 @@
+const { google } = require('googleapis');
+const credentials = require("./views/assets/credentials-cal.json")
 class cal {
+
     constructor() {
-        const { google } = require('googleapis')
-
-        // Require oAuth2 from our google instance.
-        const { OAuth2 } = google.auth;
-        const credentials = require("./views/assets/Credentials.json");
-
-        // Create a new instance of oAuth and set our Client ID & Client Secret.
-        const oAuth2Client = new OAuth2(credentials.clientID, credentials.clientSecret);
-
-
-
-        const calendar = google.calendar({ version: 'v3', auth: oAuth2Client })
-
-        oAuth2Client.setCredentials({
-            refresh_token: '1//04YA_tHCNgrwfCgYIARAAGAQSNwF-L9IrWYRtinxD0fWUEYIcsq1zdX9VoYXk3fOcqBsMlPAqxpxfDEsBj3kpjN7GYd6M93yApRU',
-        })
-        // const eventStartTime = new Date()
-        // const eventEndTime = new Date()
-        // eventEndTime.setMinutes(eventEndTime.getMinutes() + 45)
-
-        const event = {
-            summary: `Scheduled print`,
-            location: `Makerspace`,
-            description: `description.`,
-            colorId: 1,
-            start: {
-                dateTime: null,
-                timeZone: 'America/Chicago',
-            },
-            end: {
-                dateTime: null,
-                timeZone: 'America/Chicago',
-            },
-        }
-
+        this.authorize();
+        this.empty = null;
     }
-
-    check(startDate, duration) {
-        let eventStartTime = startDate;
-        let eventEndTime = eventStartTime.setMinutes(eventStartTime.getMinutes() + duration);
-
-        calendar.freebusy.query(
-            {
-                resource: {
-                    timeMin: eventStartTime,
-                    timeMax: eventEndTime,
-                    timeZone: 'America/Minneapolis',
-                    items: [{ id: 'primary' }],
-                },
-            },
-            (err, res) => {
-                // Check for errors in our query and log them if they exist.
-                if (err) return console.error('Free Busy Query Error: ', err)
-
-                // Create an array of all events on our calendar during that time.
-                const eventArr = res.data.calendars.primary.busy
-
-                // Check if event array is empty which means we are not busy
-                if (eventArr.length === 0)
-                    // If we are not busy create a new calendar event.
-                    return true
-                // If event array is not empty log that we are busy.
-                console.log(`Sorry I'm busy...`);
-                return false;
+    authorize() {
+        // console.log('authorizing');
+        this.scopes = 'https://www.googleapis.com/auth/calendar.readonly';
+        this.privateKey = credentials.private_key;
+        this.clientEmail = credentials.client_email;
+        // this.projectNum = "<1046718051743>"
+        this.calendarId = "c_jkea5jm4ajhefe5ot1ejnsv788@group.calendar.google.com"
+        this.auth = new google.auth.JWT(
+            this.clientEmail,
+            null,
+            this.privateKey,
+            this.scopes
+        );
+        this.calendar = google.calendar({
+            version: 'v3',
+            project: this.projectNum,
+            auth: this.auth
+        });
+        this.check = {
+            auth: this.auth,
+            resource: {
+                timeMin: 0,
+                timeMax: 0,
+                timeZone: "America/Chicago",
+                items: [{ id: this.calendarId }]
             }
-        )
+        }
     }
-    schedule(startDate, duration) {
 
+    async freeBusyStatus(date, duration) {
+        // console.log("just entered program");
+        const startDate = new Date(date)
+        const endDate = new Date(date);
+        endDate.setMinutes(duration);
+        console.log({ startDate, endDate })
+        this.check.resource.timeMin = startDate;
+        this.check.resource.timeMax = endDate;
+        await this.getEvents().then((res) => {
+            this.empty = res;
+            // console.log({ res })
+        })
+        return this.empty;
+    }
+
+
+    async getEvents() {
+        let _this = this;
+        await _this.calendar.freebusy.query(this.check, function (err, response) {
+
+            console.log("making the query")
+
+            if (err) { console.log('error: ' + err) }
+
+            else {
+
+                const eventArr = response.data.calendars["c_jkea5jm4ajhefe5ot1ejnsv788@group.calendar.google.com"].busy;
+                console.log({ eventArr })
+                if (eventArr.length == 0) {
+                    _this.empty = true;
+                }
+                else {
+                    _this.empty = false;
+                }
+            }
+        })
+        return this.empty
+    }
+
+
+    schedule(startDate, duration) {
         let eventStartTime = startDate;
         let eventEndTime = eventStartTime.setMinutes(eventStartTime.getMinutes() + 45);
         this.event.start.dateTime = eventStartTime;

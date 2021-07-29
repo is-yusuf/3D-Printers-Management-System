@@ -1,15 +1,19 @@
 
-async function testing() {
-    return await testing2().then((res) => {
-        return res;
+
+
+let simulate = async function (num, callbackfunc) {
+    return 1
+};
+
+
+function wrapper() {
+    return simulate(1, () => {
+        return simulate(1, () => {
+            return 1
+        })
     })
 }
 
-
-async function testing2() {
-    return "text we want"
-}
-
-testing().then((text) => {
-    console.log(text);
+wrapper().then((res) => {
+    console.log(res);
 })

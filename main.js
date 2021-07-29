@@ -8,7 +8,6 @@ const { dataflow } = require('googleapis/build/src/apis/dataflow');
 const { Console } = require('console');
 app.use(express.static(__dirname + '/views'));
 app.use(express.json());
-const myCalendar = new cal();
 
 app.get("/", (req, res) => {
     res.render("index.html");
@@ -19,7 +18,12 @@ app.post("/check", (req, res) => {
     let date = new Date(req.body.date);
     date.setHours(8);
     let duration = req.body.duration;
-    let result = findSpot(date, duration)
+    const myCalendar = new cal(date);
+    setTimeout(() => {
+        myCalendar.printEvents();
+    }, 3000);
+
+    // let result = findSpot(date, duration)
     // console.log({ result })
     // if (result.exists) {
     //     res.send({ message: `Successful, we found a spot at ${result.date}` });
@@ -27,11 +31,10 @@ app.post("/check", (req, res) => {
 })
 
 function findSpot(date, duration) {
-    console.log("actualls inside")
-
-    myCalendar.freeBusyStatus(date, duration).then((resfromcal) => {
-        console.log({ resfromcal });
-    })
+    console.log(myCalendar.freeBusyStatus(date, duration));
+    // myCalendar.freeBusyStatus(date, duration).then((resfromcal) => {
+    //     console.log({ resfromcal });
+    // })
     return {
         exists: true,
         date, date

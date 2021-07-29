@@ -39,10 +39,12 @@ class cal {
         // console.log("just entered program");
         const startDate = new Date(date)
         const endDate = new Date(date);
-        endDate.setMinutes(duration);
-        console.log({ startDate, endDate })
+        // endDate.setDate()
+        endDate.setMinutes(endDate.getMinutes() + duration + 1);
         this.check.resource.timeMin = startDate;
         this.check.resource.timeMax = endDate;
+        // console.log(this.check)
+
         await this.getEvents().then((res) => {
             this.empty = res;
             // console.log({ res })
@@ -54,13 +56,9 @@ class cal {
     async getEvents() {
         let _this = this;
         await _this.calendar.freebusy.query(this.check, function (err, response) {
-
             console.log("making the query")
-
             if (err) { console.log('error: ' + err) }
-
             else {
-
                 const eventArr = response.data.calendars["c_jkea5jm4ajhefe5ot1ejnsv788@group.calendar.google.com"].busy;
                 console.log({ eventArr })
                 if (eventArr.length == 0) {

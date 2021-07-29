@@ -2,12 +2,10 @@ const { google } = require('googleapis');
 const credentials = require("./views/assets/credentials-cal.json")
 class cal {
 
-    constructor() {
-        this.authorize();
-        this.empty = null;
+    constructor(date) {
+        this.authorize(date);
     }
-    authorize() {
-        // console.log('authorizing');
+    authorize(date) {
         this.scopes = 'https://www.googleapis.com/auth/calendar.readonly';
         this.privateKey = credentials.private_key;
         this.clientEmail = credentials.client_email;
@@ -33,48 +31,26 @@ class cal {
                 items: [{ id: this.calendarId }]
             }
         }
+        this.eventArr = this.freeBusyStatus(date, 60 * 24);
+
+
+    }
+    printEvents() {
+        console.log({ eventarr: this.eventArr })
+
     }
 
-    async freeBusyStatus(date, duration) {
-        const startDate = new Date(date)
-        const endDate = new Date(date);
+    freeBusyStatus(date, duration) {
+        const endDate = new Date(date)
         endDate.setMinutes(endDate.getMinutes() + duration);
-        this.check.resource.timeMin = startDate;
+        this.check.resource.timeMin = new Date(date);
         this.check.resource.timeMax = endDate;
-        this.askCal((resfromaskcal) => {
-            console.log({ resfromaskcal })
+
+        return this.calendar.freebusy.query(this.check, async (err, response) => {
+            this.eventArr = response.data.calendars["c_jkea5jm4ajhefe5ot1ejnsv788@group.calendar.google.com"].busy;
+            return response.data.calendars["c_jkea5jm4ajhefe5ot1ejnsv788@group.calendar.google.com"].busy;
         })
     }
-
-    async askCal() {
-        let _this = this;
-        let x = 0;
-        await this.calendar.freebusy.query(this.check, async (err, response) => {
-            x = 1;
-            console.log("making the query")
-            if (err) { console.log('error: ' + err) }
-            else {
-                const eventArr = response.data.calendars["c_jkea5jm4ajhefe5ot1ejnsv788@group.calendar.google.com"].busy;
-                console.log({ eventArr })
-                if (eventArr.length == 0) {
-                    _this.empty = true;
-                    console.log({ key: _this.empty })
-
-                    return true
-                }
-                else {
-                    _this.empty = false;
-                    console.log({ key: _this.empty })
-                    return false
-                }
-            }
-            return _this.empty;
-        })
-        console.log({ x })
-    }
-
-
-
 
     schedule(startDate, duration) {
         let eventStartTime = startDate;

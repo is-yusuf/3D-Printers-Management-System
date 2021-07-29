@@ -41,9 +41,16 @@ class cal {
         endDate.setMinutes(endDate.getMinutes() + duration);
         this.check.resource.timeMin = startDate;
         this.check.resource.timeMax = endDate;
-        let _this = this;
+        this.askCal((resfromaskcal) => {
+            console.log({ resfromaskcal })
+        })
+    }
 
-        return await this.calendar.freebusy.query(this.check, function (err, response) {
+    async askCal() {
+        let _this = this;
+        let x = 0;
+        await this.calendar.freebusy.query(this.check, async (err, response) => {
+            x = 1;
             console.log("making the query")
             if (err) { console.log('error: ' + err) }
             else {
@@ -51,19 +58,21 @@ class cal {
                 console.log({ eventArr })
                 if (eventArr.length == 0) {
                     _this.empty = true;
-                    // return true
+                    console.log({ key: _this.empty })
+
+                    return true
                 }
                 else {
                     _this.empty = false;
-                    // return false
+                    console.log({ key: _this.empty })
+                    return false
                 }
             }
-            console.log({ key: _this.empty })
-
             return _this.empty;
-
         })
+        console.log({ x })
     }
+
 
 
 

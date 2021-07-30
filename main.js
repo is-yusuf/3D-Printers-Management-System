@@ -32,7 +32,7 @@ app.post("/check", (req, res) => {
     const myCalendar = new cal(date);
     myCalendar.freeBusyStatus(date).then((ReadyCal) => {
         // ReadyCal.findSpot(30)
-        console.log(ReadyCal.findSpot(30))
+        console.log({ availableslots: ReadyCal.findSpot(30) })
         // console.log(ReadyCal.spots)
 
     })

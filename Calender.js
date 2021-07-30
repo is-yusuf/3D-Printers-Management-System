@@ -1,11 +1,12 @@
+const { Console } = require('console');
 const { google } = require('googleapis');
 const credentials = require("./views/assets/credentials-cal.json")
 class cal {
 
     constructor(date) {
-        this.authorize(date);
-    }
-    authorize(date) {
+        this.startDate = new Date(date);
+        this.endDay = new Date(date)
+        this.endDay.setMinutes(this.endDay.getMinutes() + 60 * 16 - 1);
         this.scopes = 'https://www.googleapis.com/auth/calendar.readonly';
         this.privateKey = credentials.private_key;
         this.clientEmail = credentials.client_email;
@@ -17,44 +18,81 @@ class cal {
             this.privateKey,
             this.scopes
         );
+        this.check = {
+            auth: this.auth,
+            resource: {
+                timeMin: this.startDate,
+                timeMax: this.endDay,
+                timeZone: "America/Chicago",
+                items: [{ id: this.calendarId }]
+            }
+        }
         this.calendar = google.calendar({
             version: 'v3',
             project: this.projectNum,
             auth: this.auth
         });
-        this.check = {
-            auth: this.auth,
-            resource: {
-                timeMin: 0,
-                timeMax: 0,
-                timeZone: "America/Chicago",
-                items: [{ id: this.calendarId }]
-            }
-        }
-        this.eventArr = this.freeBusyStatus(date, 60 * 24);
-
-
+        this.freeBusyStatus(date);
     }
+
     printEvents() {
         console.log({ eventarr: this.eventArr })
 
     }
+    findSpot(duration) {
 
-    freeBusyStatus(date, duration) {
-        const endDate = new Date(date)
-        endDate.setMinutes(endDate.getMinutes() + duration);
-        this.check.resource.timeMin = new Date(date);
-        this.check.resource.timeMax = endDate;
+        this.sliceDay(duration);
+        this.startDateForSpot = new Date(this.startDate);
+        this.endDate = new Date(this.startDateForSpot);
+        this.endDate.setMinutes(this.endDate.getMinutes() + duration);
 
+        this.spots.forEach(spot => {
+            this.eventArr.forEach(event => {
+                if (!this.overlaps(spot.start, spot.end, event.start, event.end)) {
+                    this.spot.remove(spot);
+                }
+            })
+
+            this.startDateForSpot.setMinutes(this.startDateForSpot.getMinutes() + duration);
+            this.endDate.setMinutes(this.endDate.getMinutes() + duration);
+            return this.possible;
+        })
+
+
+    }
+    sliceDay(duration) {
+        this.spots = []
+        this.initialDate = new Date(this.startDate);
+        this.endInitialDate = new Date(this.startDate);
+        this.endInitialDate.setMinutes(this.endInitialDate.getMinutes() + duration);
+
+        while (this.endInitialDate.getDate() == this.startDate.getDate()) {
+            // console.log(`slicing dAY`)
+            // console.log({ end: this.endInitialDate, start: this.initialDate })
+            this.spots.push({ start: new Date(this.initialDate), end: new Date(this.endInitialDate) });
+            this.endInitialDate.setMinutes(this.endInitialDate.getMinutes() + duration);
+            this.initialDate.setMinutes(this.initialDate.getMinutes() + duration);
+        }
+    }
+    overlaps(a_start, a_end, b_start, b_end) {
+        if (a_start <= b_start && b_start <= a_end) return true; // b starts in a
+        if (a_start <= b_end && b_end <= a_end) return true; // b ends in a
+        if (b_start < a_start && a_end < b_end) return true; // a in b
+        return false;
+    }
+
+    freeBusyStatus(date) {
+        // console.log({ checkmin: this.check.resource.timeMin })
+        // console.log({ checkmax: this.check.resource.timeMax })
         return this.calendar.freebusy.query(this.check, async (err, response) => {
             this.eventArr = response.data.calendars["c_jkea5jm4ajhefe5ot1ejnsv788@group.calendar.google.com"].busy;
-            return response.data.calendars["c_jkea5jm4ajhefe5ot1ejnsv788@group.calendar.google.com"].busy;
         })
+
     }
 
     schedule(startDate, duration) {
-        let eventStartTime = startDate;
-        let eventEndTime = eventStartTime.setMinutes(eventStartTime.getMinutes() + 45);
+        let eventStartTime = new Date(startDate);
+        let eventEndTime = new Date(eventStartTime.setMinutes(eventStartTime.getMinutes() + 45));
         this.event.start.dateTime = eventStartTime;
         this.event.end.dateTime = eventEndTime;
         calendar.events.insert(

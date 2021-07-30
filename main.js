@@ -1,69 +1,37 @@
+// importing googleapis for the calendar
 const { google } = require('googleapis');
+const { cal } = require("./Calender");
+
+// importing express for the server side
 const express = require('express');
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs")
-const { cal } = require("./Calender");
-const { dataflow } = require('googleapis/build/src/apis/dataflow');
-const { Console } = require('console');
-app.use(express.static(__dirname + '/views'));
+// this is becasue express doesn't know how to read request of json
 app.use(express.json());
+// in order for express to know the directory of front end
+app.use(express.static(__dirname + '/views'));
 
+
+// rendering the homepage
 app.get("/", (req, res) => {
     res.render("index.html");
 })
 
+// requests sent to /check are being used to check the vacant places in the date provided
 app.post("/check", (req, res) => {
     console.log("________________________________________________________")
     let date = new Date(req.body.date);
-    date.setHours(8);
+    // adding 8 becasue we want to start the day at 8am
+    date.setHours(date.getHours() + 8);
+    // console.log({ date })
     let duration = req.body.duration;
+    // creates a caldenar instant
     const myCalendar = new cal(date);
-    setTimeout(() => {
-        myCalendar.printEvents();
-    }, 3000);
+    myCalendar.printEvents();
+    // myCalendar.findSpot(30)
+    // console.log(myCalendar.findSpot(30));
 
-    // let result = findSpot(date, duration)
-    // console.log({ result })
-    // if (result.exists) {
-    //     res.send({ message: `Successful, we found a spot at ${result.date}` });
-    // }
 })
-
-function findSpot(date, duration) {
-    console.log(myCalendar.freeBusyStatus(date, duration));
-    // myCalendar.freeBusyStatus(date, duration).then((resfromcal) => {
-    //     console.log({ resfromcal });
-    // })
-    return {
-        exists: true,
-        date, date
-    }
-
-    // .then((resultFromCalender) => {
-    //     console.log({ resultFromCalender })
-
-    //     return {
-    //         exists: true,
-    //         date: date
-    //     }
-    //     if (resultFromCalender.exists) {
-    //         return {
-    //             exists: true,
-    //             date: date
-    //         }
-    //     }
-    // else if (date.getHours() < 17) {
-    //     date.setMinutes(date.getMinutes() + duration)
-    //     return findSpot(date, duration)
-    // }
-    // else {
-    //     return {
-    //         exists: false,
-    //         date: null
-    //     }
-    // }
-    // })
-}
 
 app.listen(5500, () => { console.log("listening on port 5500") });

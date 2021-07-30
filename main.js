@@ -4,6 +4,7 @@ const { cal } = require("./Calender");
 
 // importing express for the server side
 const express = require('express');
+const { Console } = require('console');
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs")
@@ -22,16 +23,19 @@ app.get("/", (req, res) => {
 app.post("/check", (req, res) => {
     console.log("________________________________________________________")
     let date = new Date(req.body.date);
+    // console.log(date)
     // adding 8 becasue we want to start the day at 8am
     date.setHours(date.getHours() + 8);
     // console.log({ date })
     let duration = req.body.duration;
     // creates a caldenar instant
     const myCalendar = new cal(date);
-    myCalendar.printEvents();
-    // myCalendar.findSpot(30)
-    // console.log(myCalendar.findSpot(30));
+    myCalendar.freeBusyStatus(date).then((ReadyCal) => {
+        // ReadyCal.findSpot(30)
+        console.log(ReadyCal.findSpot(30))
+        // console.log(ReadyCal.spots)
 
+    })
 })
 
 app.listen(5500, () => { console.log("listening on port 5500") });

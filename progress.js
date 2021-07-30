@@ -1,1 +1,1 @@
-1- need to solve weird { resultFromCalender: undefined } 
+1 - check eventArr because I found a weird event at 2 which triggers case 1 which also needs some investigation

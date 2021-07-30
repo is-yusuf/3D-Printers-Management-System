@@ -1,12 +1,14 @@
 const { Console } = require('console');
+const { response } = require('express');
 const { google } = require('googleapis');
 const credentials = require("./views/assets/credentials-cal.json")
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
 class cal {
-
     constructor(date) {
         this.startDate = new Date(date);
         this.endDay = new Date(date)
-        this.endDay.setMinutes(this.endDay.getMinutes() + 60 * 16 - 1);
+        this.endDay.setMinutes(this.endDay.getMinutes() + 60 * 16_1);
         this.scopes = 'https://www.googleapis.com/auth/calendar.readonly';
         this.privateKey = credentials.private_key;
         this.clientEmail = credentials.client_email;
@@ -32,12 +34,12 @@ class cal {
             project: this.projectNum,
             auth: this.auth
         });
-        this.freeBusyStatus(date);
+        this.spots = []
+
     }
 
     printEvents() {
         console.log({ eventarr: this.eventArr })
-
     }
     findSpot(duration) {
 
@@ -45,19 +47,19 @@ class cal {
         this.startDateForSpot = new Date(this.startDate);
         this.endDate = new Date(this.startDateForSpot);
         this.endDate.setMinutes(this.endDate.getMinutes() + duration);
-
-        this.spots.forEach(spot => {
-            this.eventArr.forEach(event => {
-                if (!this.overlaps(spot.start, spot.end, event.start, event.end)) {
-                    this.spot.remove(spot);
+        // console.log(this.spots[0].start.getTimezoneOffset());
+        // console.log(this.eventArr[0].start.getTimezoneOffset());
+        this.spots.forEach((spot, indexSpot) => {
+            this.eventArr.forEach((event, indexEvent) => {
+                if (this.overlaps(spot.start, spot.end, event.start, event.end)) {
+                    // console.log(`removing ${this.spots[indexSpot].start}`)
+                    this.spots.splice(indexSpot, 1);
                 }
             })
-
             this.startDateForSpot.setMinutes(this.startDateForSpot.getMinutes() + duration);
             this.endDate.setMinutes(this.endDate.getMinutes() + duration);
-            return this.possible;
         })
-
+        return this.spots;
 
     }
     sliceDay(duration) {
@@ -65,27 +67,58 @@ class cal {
         this.initialDate = new Date(this.startDate);
         this.endInitialDate = new Date(this.startDate);
         this.endInitialDate.setMinutes(this.endInitialDate.getMinutes() + duration);
-
         while (this.endInitialDate.getDate() == this.startDate.getDate()) {
-            // console.log(`slicing dAY`)
-            // console.log({ end: this.endInitialDate, start: this.initialDate })
             this.spots.push({ start: new Date(this.initialDate), end: new Date(this.endInitialDate) });
             this.endInitialDate.setMinutes(this.endInitialDate.getMinutes() + duration);
             this.initialDate.setMinutes(this.initialDate.getMinutes() + duration);
         }
     }
-    overlaps(a_start, a_end, b_start, b_end) {
-        if (a_start <= b_start && b_start <= a_end) return true; // b starts in a
-        if (a_start <= b_end && b_end <= a_end) return true; // b ends in a
-        if (b_start < a_start && a_end < b_end) return true; // a in b
+    overlaps(s_s, s_e, e_s, e_e) {
+        s_s = s_s.toISOString();
+        s_e = s_e.toISOString();
+        e_e = e_e.toISOString();
+        e_s = e_s.toISOString();
+        if (s_s < e_s && s_e < e_e) {
+            console.log("case 1")
+            return false;
+        }
+        if (s_s == e_s) {
+            console.log("case 2")
+            return true;
+        }
+        if (s_s > e_s && s_e <= e_e) {
+            console.log("case 3")
+            return true;
+        }
+        if (s_s > e_e) {
+            console.log({ s_s, e_e })
+            console.log("case 4")
+            return false;
+        }
+        if (s_s < e_s && s_e < e_e) {
+            console.log("case 5")
+            return true;
+        }
+        if (s_s < e_s && s_e > e_s) {
+            console.log("case 1")
+            return true;
+        }
         return false;
     }
+    convertEventArr() {
+        this.eventArr.forEach((startend, index) => {
+            this.eventArr[index].start = new Date(startend.start);
+            this.eventArr[index].end = new Date(startend.end);
+        })
+    }
 
-    freeBusyStatus(date) {
+    async freeBusyStatus(date) {
         // console.log({ checkmin: this.check.resource.timeMin })
         // console.log({ checkmax: this.check.resource.timeMax })
-        return this.calendar.freebusy.query(this.check, async (err, response) => {
+        return this.calendar.freebusy.query(this.check).then((response) => {
             this.eventArr = response.data.calendars["c_jkea5jm4ajhefe5ot1ejnsv788@group.calendar.google.com"].busy;
+            this.convertEventArr()
+            return this;
         })
 
     }

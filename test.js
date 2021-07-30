@@ -1,19 +1,9 @@
+startdate = new Date()
+console.log(startdate)
+startdate.setMinutes(50)
+console.log(startdate)
+startdate.setMinutes(startdate.getMinutes() + 50)
+console.log(startdate)
 
-
-
-let simulate = async function (num, callbackfunc) {
-    return 1
-};
-
-
-function wrapper() {
-    return simulate(1, () => {
-        return simulate(1, () => {
-            return 1
-        })
-    })
-}
-
-wrapper().then((res) => {
-    console.log(res);
-})
+startdate.setMinutes(startdate.getMinutes() + 50)
+console.log(startdate)

@@ -21,7 +21,7 @@ app.get("/", (req, res) => {
 
 // requests sent to /check are being used to check the vacant places in the date provided
 app.post("/check", (req, res) => {
-    console.log("________________________________________________________")
+    // console.log("________________________________________________________")
     let date = new Date(req.body.date);
     // console.log(date)
     // adding 8 becasue we want to start the day at 8am
@@ -32,10 +32,14 @@ app.post("/check", (req, res) => {
     const myCalendar = new cal(date);
     myCalendar.freeBusyStatus(date).then((ReadyCal) => {
         // ReadyCal.findSpot(30)
-        console.log({ availableslots: ReadyCal.findSpot(30) })
-        // console.log(ReadyCal.spots)
+        res.send({ availableslots: ReadyCal.findSpot(30) })
 
     })
 })
 
+app.post("/schedule", (req, res) => {
+    startDate = new Date(req.body.start);
+    endDate = new Date(req.body.end);
+    // console.log(myCalendar);
+})
 app.listen(5500, () => { console.log("listening on port 5500") });

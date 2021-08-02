@@ -45,16 +45,18 @@ class cal {
     findSpot(duration) {
         this.sliceDay(duration);
         this.updatedslots = []
+
+        if (this.eventArr.length == 0) {
+            this.updatedslots = Object.assign(this.spots)
+        }
         // this.printSlots();
         // console.log({ eventarr: this.eventArr })
         // console.log({ spotsArr: this.spots[1] })
-
         this.spots.forEach((spot, indexSpot) => {
             this.eventArr.forEach((event, indexEvent) => {
                 //     if (spot.start.getHours() == 8 && spot.start.getMinutes() == 30) {
                 //         console.log(this.overlaps(spot.start, spot.end, event.start, event.end))
                 //     }
-
                 if (!this.overlaps(spot.start, spot.end, event.start, event.end)) {
                     this.updatedslots.push(spot);
                 }
@@ -72,7 +74,7 @@ class cal {
         this.endInitialDate.setMinutes(this.endInitialDate.getMinutes() + duration);
         // console.log({ initdate: this.endInitialDate, startdate: this.startDate })
 
-        while (this.endInitialDate.getDate() == this.startDate.getDate()) {
+        while (this.endInitialDate.getDate() == this.startDate.getDate() && this.endInitialDate.getHours() != 0) {
             this.spots.push({ start: new Date(this.initialDate), end: new Date(this.endInitialDate) });
             this.endInitialDate.setMinutes(this.endInitialDate.getMinutes() + duration);
             this.initialDate.setMinutes(this.initialDate.getMinutes() + duration);
@@ -91,15 +93,15 @@ class cal {
         e_e = e_e.toISOString();
         e_s = e_s.toISOString();
         if (s_s < e_s && s_e < e_s) {
-            console.log("case 1")
+            // console.log("case 1")
             return false;
         }
         if (s_s == e_s) {
-            console.log("case 2")
+            // console.log("case 2")
             return true;
         }
         if (s_s > e_s && s_e <= e_e) {
-            console.log("case 3")
+            // console.log("case 3")
             return true;
         }
         if (s_s > e_e) {
@@ -121,9 +123,9 @@ class cal {
         this.eventArr.forEach((startend, index) => {
 
             this.eventArr[index].start = new Date(startend.start);
-            this.eventArr[index].start.setHours(this.eventArr[index].start.getHours() - 5)
+            // this.eventArr[index].start.setHours(this.eventArr[index].start.getHours() - 5)
             this.eventArr[index].end = new Date(startend.end);
-            this.eventArr[index].end.setHours(this.eventArr[index].end.getHours() - 5)
+            // this.eventArr[index].end.setHours(this.eventArr[index].end.getHours() - 5)
 
         })
     }

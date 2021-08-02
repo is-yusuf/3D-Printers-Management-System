@@ -1,14 +1,18 @@
+const { Console } = require('console');
+const { response } = require('express');
 const { google } = require('googleapis');
 const credentials = require("./views/assets/credentials-cal.json")
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
 class cal {
-
     constructor() {
-        this.authorize();
-        this.empty = null;
+
     }
-    authorize() {
-        // console.log('authorizing');
-        this.scopes = 'https://www.googleapis.com/auth/calendar.readonly';
+    authorize(date) {
+        this.startDate = new Date(date);
+        this.endDay = new Date(date)
+        this.endDay.setMinutes(this.endDay.getMinutes() + 60 * 16 - 1);
+        this.scopes = 'https://www.googleapis.com/auth/calendar';
         this.privateKey = credentials.private_key;
         this.clientEmail = credentials.client_email;
         // this.projectNum = "<1046718051743>"
@@ -19,70 +23,148 @@ class cal {
             this.privateKey,
             this.scopes
         );
+        this.check = {
+            auth: this.auth,
+            resource: {
+                timeMin: this.startDate,
+                timeMax: this.endDay,
+                timeZone: "America/Chicago",
+                items: [{ id: this.calendarId }]
+            }
+        }
         this.calendar = google.calendar({
             version: 'v3',
             project: this.projectNum,
             auth: this.auth
         });
-        this.check = {
-            auth: this.auth,
-            resource: {
-                timeMin: 0,
-                timeMax: 0,
-                timeZone: "America/Chicago",
-                items: [{ id: this.calendarId }]
-            }
+        this.spots = []
+
+    }
+
+    printEvents() {
+        console.log({ eventarr: this.eventArr })
+    }
+    findSpot(duration) {
+        this.sliceDay(duration);
+        this.updatedslots = []
+
+        if (this.eventArr.length == 0) {
+            this.updatedslots = Object.assign(this.spots)
+        }
+        // this.printSlots();
+        // console.log({ eventarr: this.eventArr })
+        // console.log({ spotsArr: this.spots[1] })
+        this.spots.forEach((spot, indexSpot) => {
+            this.eventArr.forEach((event, indexEvent) => {
+                //     if (spot.start.getHours() == 8 && spot.start.getMinutes() == 30) {
+                //         console.log(this.overlaps(spot.start, spot.end, event.start, event.end))
+                //     }
+                if (!this.overlaps(spot.start, spot.end, event.start, event.end)) {
+                    this.updatedslots.push(spot);
+                }
+            })
+
+        })
+        return this.updatedslots;
+        // return true;
+
+    }
+    sliceDay(duration) {
+        this.spots = []
+        this.initialDate = new Date(this.startDate);
+        this.endInitialDate = new Date(this.startDate);
+        this.endInitialDate.setMinutes(this.endInitialDate.getMinutes() + duration);
+        // console.log({ initdate: this.endInitialDate, startdate: this.startDate })
+
+        while (this.endInitialDate.getDate() == this.startDate.getDate() && this.endInitialDate.getHours() != 0) {
+            this.spots.push({ start: new Date(this.initialDate), end: new Date(this.endInitialDate) });
+            this.endInitialDate.setMinutes(this.endInitialDate.getMinutes() + duration);
+            this.initialDate.setMinutes(this.initialDate.getMinutes() + duration);
         }
     }
+    printSlots() {
+        console.log({ slots: this.spots })
+    }
+    overlaps(s_s, s_e, e_s, e_e) {
+        // if (this.i == 1) {
+        //     this.printSlots();
+        //     console.log({ s_s, s_e })
+        // }
+        s_s = s_s.toISOString();
+        s_e = s_e.toISOString();
+        e_e = e_e.toISOString();
+        e_s = e_s.toISOString();
+        if (s_s < e_s && s_e < e_s) {
+            // console.log("case 1")
+            return false;
+        }
+        if (s_s == e_s) {
+            // console.log("case 2")
+            return true;
+        }
+        if (s_s > e_s && s_e <= e_e) {
+            // console.log("case 3")
+            return true;
+        }
+        if (s_s > e_e) {
+            // console.log("case 4")
+            return false;
+        }
+        if (s_s < e_s && s_e < e_e) {
+            // console.log("case 5")
+            return true;
+        }
+        if (s_s < e_s && s_e > e_s) {
+            // console.log("case 6")
+            return true;
+        }
 
-    async freeBusyStatus(date, duration) {
-        const startDate = new Date(date)
-        const endDate = new Date(date);
-        endDate.setMinutes(endDate.getMinutes() + duration);
-        this.check.resource.timeMin = startDate;
-        this.check.resource.timeMax = endDate;
-        this.askCal((resfromaskcal) => {
-            console.log({ resfromaskcal })
+        return false;
+    }
+    convertEventArr() {
+        this.eventArr.forEach((startend, index) => {
+
+            this.eventArr[index].start = new Date(startend.start);
+            // this.eventArr[index].start.setHours(this.eventArr[index].start.getHours() - 5)
+            this.eventArr[index].end = new Date(startend.end);
+            // this.eventArr[index].end.setHours(this.eventArr[index].end.getHours() - 5)
+
         })
     }
+    async freeBusyStatus(date) {
+        this.authorize(date);
+        return this.calendar.freebusy.query(this.check).then((response) => {
+            this.eventArr = response.data.calendars["c_jkea5jm4ajhefe5ot1ejnsv788@group.calendar.google.com"].busy;
+            // console.log({ eventarroriginalaa: this.eventArr })
 
-    async askCal() {
-        let _this = this;
-        let x = 0;
-        await this.calendar.freebusy.query(this.check, async (err, response) => {
-            x = 1;
-            console.log("making the query")
-            if (err) { console.log('error: ' + err) }
-            else {
-                const eventArr = response.data.calendars["c_jkea5jm4ajhefe5ot1ejnsv788@group.calendar.google.com"].busy;
-                console.log({ eventArr })
-                if (eventArr.length == 0) {
-                    _this.empty = true;
-                    console.log({ key: _this.empty })
-
-                    return true
-                }
-                else {
-                    _this.empty = false;
-                    console.log({ key: _this.empty })
-                    return false
-                }
-            }
-            return _this.empty;
+            this.convertEventArr()
+            // console.log({ eventarroriginal: this.eventArr })
+            return this;
         })
-        console.log({ x })
+
     }
 
+    schedule(startDate, endDate) {
+        // console.log(this)
+        // console.log(this.calendarId)
 
-
-
-    schedule(startDate, duration) {
-        let eventStartTime = startDate;
-        let eventEndTime = eventStartTime.setMinutes(eventStartTime.getMinutes() + 45);
-        this.event.start.dateTime = eventStartTime;
-        this.event.end.dateTime = eventEndTime;
-        calendar.events.insert(
-            { calendarId: 'primary', resource: this.event },
+        this.event = {
+            summary: `reserved`,
+            location: `Makerspace`,
+            description: `taken`,
+            colorId: 5,
+            start: {
+                dateTime: startDate,
+                timeZone: 'America/Chicago',
+            },
+            end: {
+                dateTime: endDate,
+                timeZone: 'America/Chicago',
+            },
+        }
+        // console.log(this.calendarId, this.event)
+        this.calendar.events.insert(
+            { calendarId: this.calendarId, resource: this.event },
             err => {
                 // Check for errors and log them if they exist.
                 if (err) return console.error('Error Creating Calender Event:', err)

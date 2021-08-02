@@ -88,7 +88,8 @@ function displayDateButtons(slotsArr) {
 }
 
 function schedule(btn) {
-    let btnobject = { start: btn.getAttribute('start'), end: btn.getAttribute('start') }
+    let btnobject = { start: btn.getAttribute('start'), end: btn.getAttribute('end') }
+
     console.log(btnobject);
 
     fetch("/schedule", {
@@ -102,4 +103,14 @@ function schedule(btn) {
     }).then((data) => {
         printAvailableSlots(data.availableslots);
     })
+}
+function updateTextInput(val) {
+    document.getElementById('textInput').value = val;
+}
+function updateRange(val) {
+    document.getElementById("duration").value = val;
+}
+
+window.onload = function () {
+    updateTextInput(document.getElementById('duration').value)
 }

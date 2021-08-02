@@ -5,12 +5,14 @@ const credentials = require("./views/assets/credentials-cal.json")
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 class cal {
-    constructor(date) {
-        this.i = 0;
+    constructor() {
+
+    }
+    authorize(date) {
         this.startDate = new Date(date);
         this.endDay = new Date(date)
         this.endDay.setMinutes(this.endDay.getMinutes() + 60 * 16 - 1);
-        this.scopes = 'https://www.googleapis.com/auth/calendar.readonly';
+        this.scopes = 'https://www.googleapis.com/auth/calendar';
         this.privateKey = credentials.private_key;
         this.clientEmail = credentials.client_email;
         // this.projectNum = "<1046718051743>"
@@ -130,6 +132,7 @@ class cal {
         })
     }
     async freeBusyStatus(date) {
+        this.authorize(date);
         return this.calendar.freebusy.query(this.check).then((response) => {
             this.eventArr = response.data.calendars["c_jkea5jm4ajhefe5ot1ejnsv788@group.calendar.google.com"].busy;
             // console.log({ eventarroriginalaa: this.eventArr })
@@ -141,13 +144,27 @@ class cal {
 
     }
 
-    schedule(startDate, duration) {
-        let eventStartTime = new Date(startDate);
-        let eventEndTime = new Date(eventStartTime.setMinutes(eventStartTime.getMinutes() + 45));
-        this.event.start.dateTime = eventStartTime;
-        this.event.end.dateTime = eventEndTime;
-        calendar.events.insert(
-            { calendarId: 'primary', resource: this.event },
+    schedule(startDate, endDate) {
+        // console.log(this)
+        // console.log(this.calendarId)
+
+        this.event = {
+            summary: `reserved`,
+            location: `Makerspace`,
+            description: `taken`,
+            colorId: 5,
+            start: {
+                dateTime: startDate,
+                timeZone: 'America/Chicago',
+            },
+            end: {
+                dateTime: endDate,
+                timeZone: 'America/Chicago',
+            },
+        }
+        // console.log(this.calendarId, this.event)
+        this.calendar.events.insert(
+            { calendarId: this.calendarId, resource: this.event },
             err => {
                 // Check for errors and log them if they exist.
                 if (err) return console.error('Error Creating Calender Event:', err)

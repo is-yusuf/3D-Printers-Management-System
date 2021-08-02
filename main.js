@@ -1,6 +1,7 @@
 // importing googleapis for the calendar
 const { google } = require('googleapis');
 const { cal } = require("./Calender");
+let myCalendar = new cal();
 
 // importing express for the server side
 const express = require('express');
@@ -29,10 +30,10 @@ app.post("/check", (req, res) => {
     // console.log({ date })
     let duration = req.body.duration;
     // creates a caldenar instant
-    const myCalendar = new cal(date);
     myCalendar.freeBusyStatus(date).then((ReadyCal) => {
         // ReadyCal.findSpot(30)
-        res.send({ availableslots: ReadyCal.findSpot(30) })
+        myCalendar = ReadyCal
+        res.send({ availableslots: myCalendar.findSpot(30) })
 
     })
 })
@@ -40,6 +41,8 @@ app.post("/check", (req, res) => {
 app.post("/schedule", (req, res) => {
     startDate = new Date(req.body.start);
     endDate = new Date(req.body.end);
-    // console.log(myCalendar);
+    console.log(startDate, endDate)
+    myCalendar.schedule(startDate, endDate);
+    console.log("scheduled");
 })
 app.listen(5500, () => { console.log("listening on port 5500") });

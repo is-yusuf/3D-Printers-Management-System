@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel=Stylesheet type="text/css" href="style.css">
     <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Hahmlet:wght@200;900&display=swap');
+    </style>
 
 </head>
 
@@ -44,19 +47,18 @@
     <form action="/checking" id="schedule" method="POST">
         <div class='print-time'>
             <label for="time" default> printing duration</label>
-            <input type="text" id="duration" name="time" placeholder="in minutes" value="30">
+            <input type="text" id="textInput" value="" onchange="updateRange(this.value)"> <span id="hr">hr</span>
+            <input type="range" id="duration" name="time" min=".5" max="24" value="5" step=".5" showRange="true"
+                class="slider" oninput="updateTextInput(this.value)">
         </div>
+        <br>
         <div class="date">
             <label for="date"> please enter a date</label>
-            <input type="date" name="date" id="date" value="2021-07-30">
+            <input type="date" name="date" id="date" value="2021-07-31">
         </div>
         <button type="button" id="check">check schedule</button>
         <button type="button" id="schedule" onclick="schedule()">schedule</button>
     </form>
-
-    <h1 id=output>The printer you should use is: </h1>
-
-
 </body>
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 <script src="./scripts.js"></script>

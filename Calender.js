@@ -46,28 +46,67 @@ class cal {
     }
     findSpot(duration) {
         this.sliceDay(duration);
+        // console.log({ spots: this.spots })
         this.updatedslots = []
-
         if (this.eventArr.length == 0) {
             this.updatedslots = Object.assign(this.spots)
         }
-        // this.printSlots();
-        // console.log({ eventarr: this.eventArr })
-        // console.log({ spotsArr: this.spots[1] })
-        this.spots.forEach((spot, indexSpot) => {
-            this.eventArr.forEach((event, indexEvent) => {
-                //     if (spot.start.getHours() == 8 && spot.start.getMinutes() == 30) {
-                //         console.log(this.overlaps(spot.start, spot.end, event.start, event.end))
-                //     }
+        let nonoverlapwith = 0;
+        this.spots.forEach((spot) => {
+            this.eventArr.forEach((event) => {
                 if (!this.overlaps(spot.start, spot.end, event.start, event.end)) {
-                    this.updatedslots.push(spot);
+                    // console.log(spot.start + "  is added")
+                    // this.updatedslots.push(spot);
+                    nonoverlapwith += 1;
                 }
             })
-
+            if (nonoverlapwith == this.eventArr.length) {
+                this.updatedslots.push(spot);
+            }
+            nonoverlapwith = 0;
         })
         return this.updatedslots;
-        // return true;
+    }
 
+    findFirstSpot(durationMinutes) {
+        this.slotstart = new Date(this.generalDate);
+        this.slotend = new Date(this.generalDate);
+        this.slotend.setMinutes(this.slotend.getMinutes() + durationMinutes);
+        if (this.eventArr.length == 0) {
+            return { start: this.slotstart, end: this.slotend }
+        }
+        let Justbreak = false;
+        while (!Justbreak) {
+            let NonOverlap = 0;
+            this.eventArr.forEach((event) => {
+                if (!this.overlaps(this.slotstart, this.slotend, event.start, event.end)) {
+                    NonOverlap += 1;
+                }
+            })
+            if (NonOverlap == this.eventArr.length) {
+                this.printEvents()
+                console.log(
+                    { start: this.slotstart, end: this.slotend }
+                )
+                Justbreak = true
+            }
+            else {
+                NonOverlap = 0;
+                if (!(this.slotstart.getHours() >= 20)) {
+                    this.slotstart.setMinutes(this.slotstart.getMinutes() + 30);
+                    this.slotend.setMinutes(this.slotend.getMinutes() + 30);
+                }
+                else {
+                    this.slotstart = new Date(this.generalDate);
+                    this.slotend = new Date(this.generalDate);
+                    this.slotend.setMinutes(this.slotend.getMinutes() + durationMinutes);
+                    this.slotstart.setDate(this.slotstart.getDate() + 1)
+                    this.slotend.setDate(this.slotend.getDate() + 1)
+                }
+            }
+
+        }
+        return { start: this.slotstart, end: this.slotend }
     }
     sliceDay(duration) {
         this.spots = []
@@ -86,14 +125,18 @@ class cal {
         console.log({ slots: this.spots })
     }
     overlaps(s_s, s_e, e_s, e_e) {
-        // if (this.i == 1) {
-        //     this.printSlots();
-        //     console.log({ s_s, s_e })
-        // }
-        s_s = s_s.toISOString();
-        s_e = s_e.toISOString();
-        e_e = e_e.toISOString();
-        e_s = e_s.toISOString();
+        s_s = s_s.getTime()
+        s_e = s_e.getTime()
+        e_s = e_s.getTime()
+        e_e = e_e.getTime()
+
+        if (e_s - s_s >= s_s - s_e && s_e > e_s) {
+            return true
+        }
+        else {
+            return false
+        }
+
         if (s_s < e_s && s_e < e_s) {
             // console.log("case 1")
             return false;
@@ -132,6 +175,7 @@ class cal {
         })
     }
     async freeBusyStatus(date) {
+        this.generalDate = date;
         this.authorize(date);
         return this.calendar.freebusy.query(this.check).then((response) => {
             this.eventArr = response.data.calendars["c_jkea5jm4ajhefe5ot1ejnsv788@group.calendar.google.com"].busy;
@@ -143,7 +187,6 @@ class cal {
         })
 
     }
-
     schedule(startDate, endDate) {
         // console.log(this)
         // console.log(this.calendarId)

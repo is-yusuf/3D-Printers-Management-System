@@ -42,8 +42,14 @@ app.post("/asap", (req, res) => {
     let date = new Date(req.body.date);
     date.setHours(date.getHours() + 14);
     myCalendar.freeBusyStatus(date).then((ReadyCal) => {
-        res.send(ReadyCal.findFirstSpot(req.body.duration * 60))
-        console.log(ReadyCal.findFirstSpot(req.body.duration * 60))
+        let CalendarResponse = ReadyCal.findFirstSpot(req.body.duration * 60)
+        if (!CalendarResponse) {
+            res.send(false);
+        }
+        else {
+            res.send(CalendarResponse)
+        }
+        // console.log(ReadyCal.findFirstSpot(req.body.duration * 60))
     })
 
 })

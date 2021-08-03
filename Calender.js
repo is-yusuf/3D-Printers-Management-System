@@ -76,6 +76,7 @@ class cal {
             return { start: this.slotstart, end: this.slotend }
         }
         let Justbreak = false;
+        let returnfalse = false;
         while (!Justbreak) {
             let NonOverlap = 0;
             this.eventArr.forEach((event) => {
@@ -84,10 +85,6 @@ class cal {
                 }
             })
             if (NonOverlap == this.eventArr.length) {
-                this.printEvents()
-                console.log(
-                    { start: this.slotstart, end: this.slotend }
-                )
                 Justbreak = true
             }
             else {
@@ -97,15 +94,19 @@ class cal {
                     this.slotend.setMinutes(this.slotend.getMinutes() + 30);
                 }
                 else {
+                    returnfalse = true;
+                    break;
                     this.slotstart = new Date(this.generalDate);
                     this.slotend = new Date(this.generalDate);
                     this.slotend.setMinutes(this.slotend.getMinutes() + durationMinutes);
                     this.slotstart.setDate(this.slotstart.getDate() + 1)
                     this.slotend.setDate(this.slotend.getDate() + 1)
+
                 }
             }
 
         }
+        if (returnfalse) return false;
         return { start: this.slotstart, end: this.slotend }
     }
     sliceDay(duration) {

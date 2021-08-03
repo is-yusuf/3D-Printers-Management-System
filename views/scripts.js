@@ -18,6 +18,34 @@ function DisplayResults() {
     output.innerHTML = "this is a placeholder for the printer";
     image.src = "./assets/oofa.png";
 }
+function ASAP() {
+    let date = document.getElementById('date').value
+    let duration = document.getElementById('duration').value
+    // console.log({ duration })
+    let dateAndDuration = { date: date, duration: duration };
+    fetch("/asap", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dateAndDuration)
+    }).then(res => {
+        return res.json();
+
+    }).then((data) => {
+        // console.log({ slots: data })
+        let start = new Date(data.start)
+        // start.setHours(start.getHours() + 1);
+        let end = new Date(data.end)
+        // end.setHours(end.getHours() + 1);
+
+        // Display if agreeable or not
+        // console.log({ start, end })
+        confirm(start, end)
+
+    })
+
+}
 
 function checkSchedule() {
     let date = document.getElementById('date').value
@@ -42,8 +70,6 @@ function printAvailableSlots(slotsArr) {
     displayDateHeader(slotsArr);
     displayDateButtons(slotsArr)
     document.body.appendChild(outputDiv);
-
-    // console.log(div)
 
 }
 
@@ -84,8 +110,43 @@ function displayDateButtons(slotsArr) {
         i++
 
     })
-
 }
+
+
+function confirm(startdate, enddate) {
+    let reqbody = { start: startdate, end: enddate }
+    console.log(reqbody)
+    fetch("/schedule", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reqbody)
+    }).then(res => {
+        return res.json();
+    }).then((data) => {
+        printAvailableSlots(data.availableslots);
+    })
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function schedule(btn) {
     let btnobject = { start: btn.getAttribute('start'), end: btn.getAttribute('end') }
@@ -104,12 +165,16 @@ function schedule(btn) {
         printAvailableSlots(data.availableslots);
     })
 }
+
+
 function updateTextInput(val) {
     document.getElementById('textInput').value = val;
 }
 function updateRange(val) {
     document.getElementById("duration").value = val;
 }
+
+
 
 window.onload = function () {
     updateTextInput(document.getElementById('duration').value)

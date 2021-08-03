@@ -37,12 +37,20 @@ app.post("/check", (req, res) => {
 
     })
 })
+app.post("/asap", (req, res) => {
+    console.log("________________________________________________________")
+    let date = new Date(req.body.date);
+    date.setHours(date.getHours() + 14);
+    myCalendar.freeBusyStatus(date).then((ReadyCal) => {
+        res.send(ReadyCal.findFirstSpot(req.body.duration * 60))
+        console.log(ReadyCal.findFirstSpot(req.body.duration * 60))
+    })
+
+})
 
 app.post("/schedule", (req, res) => {
-    startDate = new Date(req.body.start);
-    endDate = new Date(req.body.end);
-    console.log(startDate, endDate)
-    myCalendar.schedule(startDate, endDate);
-    console.log("scheduled");
+    myCalendar.schedule(req.body.start, req.body.end);
+    // console.log("scheduled");
 })
 app.listen(5500, () => { console.log("listening on port 5500") });
+

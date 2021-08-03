@@ -1,4 +1,6 @@
 var outputDiv = document.createElement('dates');
+document.getElementById('accept').style.display = "none";
+document.getElementById('reject').style.display = "none";
 
 document.getElementById("submit").addEventListener(("click"), () => {
     DisplayResults();
@@ -21,7 +23,6 @@ function DisplayResults() {
 function ASAP() {
     let date = document.getElementById('date').value
     let duration = document.getElementById('duration').value
-    // console.log({ duration })
     let dateAndDuration = { date: date, duration: duration };
     fetch("/asap", {
         method: 'POST',
@@ -33,18 +34,40 @@ function ASAP() {
         return res.json();
 
     }).then((data) => {
-        // console.log({ slots: data })
-        let start = new Date(data.start)
-        // start.setHours(start.getHours() + 1);
-        let end = new Date(data.end)
-        // end.setHours(end.getHours() + 1);
 
-        // Display if agreeable or not
-        // console.log({ start, end })
-        confirm(start, end)
+        let start = new Date(data.start)
+
+        let end = new Date(data.end)
+
+        if (!data) {
+            window.alert("the date you entered has no available slots")
+            return;
+        }
+        else {
+            h3 = document.createElement('h3');
+            h3.innerHTML = `${start} <br>  ${end}`;
+            document.getElementById('offer').insertBefore(h3, document.getElementById('accept'))
+            document.getElementById('accept').style.display = "inline";
+            document.getElementById('reject').style.display = "inline";
+            document.getElementById('accept').addEventListener(('click'), () => {
+                confirm(start, end)
+            })
+
+            document.getElementById('reject').addEventListener(('click'), () => {
+                window.alert("please select another date")
+            })
+
+
+        }
 
     })
 
+}
+function accept() {
+    confirm(start, end)
+}
+function reject() {
+    window.alert("Choose another day please")
 }
 
 function checkSchedule() {
@@ -115,7 +138,6 @@ function displayDateButtons(slotsArr) {
 
 function confirm(startdate, enddate) {
     let reqbody = { start: startdate, end: enddate }
-    console.log(reqbody)
     fetch("/schedule", {
         method: 'POST',
         headers: {
@@ -134,24 +156,9 @@ function confirm(startdate, enddate) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function schedule(btn) {
     let btnobject = { start: btn.getAttribute('start'), end: btn.getAttribute('end') }
 
-    console.log(btnobject);
 
     fetch("/schedule", {
         method: 'POST',

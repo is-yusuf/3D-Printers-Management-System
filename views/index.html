@@ -15,7 +15,7 @@
 
 <body>
 
-    <form action="" id="form" method="GET">
+    <form action="" id="size&mat">
         <div class='print-size'>
             <label for="size">Size in inches</label>
             <select name="size" id="size">
@@ -43,6 +43,9 @@
         <p id="printer"></p>
         <img src="" alt="" id="printerimg">
     </div>
+    <br>
+    <button type="button" id="ASAP" onclick="ASAP()">Schedule ASAP</button>
+    <button type="button" id="Preferred">Schedule right after preffered time</button>
 
     <form action="/checking" id="schedule" method="POST">
         <div class='print-time'>
@@ -60,6 +63,9 @@
         <button type="button" id="schedule" onclick="schedule()">schedule</button>
     </form>
 </body>
+
+
+
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 <script src="./scripts.js"></script>
 

@@ -1,14 +1,11 @@
-const { Console } = require('console');
-const { response } = require('express');
 const { google } = require('googleapis');
 const credentials = require("./views/assets/credentials-cal.json")
-var EventEmitter = require('events').EventEmitter;
-var util = require('util');
 class cal {
     constructor() {
 
     }
     authorize(date) {
+        this.generalDate = date;
         this.startDate = new Date(date);
         this.endDay = new Date(date)
         this.endDay.setMinutes(this.endDay.getMinutes() + 60 * 16 - 1);
@@ -41,30 +38,6 @@ class cal {
 
     }
 
-    printEvents() {
-        console.log({ eventarr: this.eventArr })
-    }
-    findSpot(duration) {
-        this.sliceDay(duration);
-        // console.log({ spots: this.spots })
-        this.updatedslots = []
-        if (this.eventArr.length == 0) {
-            this.updatedslots = Object.assign(this.spots)
-        }
-        let nonoverlapwith = 0;
-        this.spots.forEach((spot) => {
-            this.eventArr.forEach((event) => {
-                if (!this.overlaps(spot.start, spot.end, event.start, event.end)) {
-                    nonoverlapwith += 1;
-                }
-            })
-            if (nonoverlapwith == this.eventArr.length) {
-                this.updatedslots.push(spot);
-            }
-            nonoverlapwith = 0;
-        })
-        return this.updatedslots;
-    }
 
     findFirstSpot(durationMinutes) {
         this.slotstart = new Date(this.generalDate);
@@ -73,100 +46,23 @@ class cal {
         while (!this.checkExactDate(this.slotstart, this.slotend)) {
             this.slotstart.setMinutes(this.slotstart.getMinutes() + 30);
             this.slotend.setMinutes(this.slotend.getMinutes() + 30);
-
             if (this.slotstart.getHours() > 20) {
                 return false;
             }
         }
         return { start: this.slotstart, end: this.slotend }
-
-
-        // if (this.eventArr.length == 0) {
-        //     return { start: this.slotstart, end: this.slotend }
-        // }
-        // let Justbreak = false;
-        // let returnfalse = false;
-        // while (!Justbreak) {
-        //     let NonOverlap = 0;
-        //     this.eventArr.forEach((event) => {
-        //         if (!this.overlaps(this.slotstart, this.slotend, event.start, event.end)) {
-        //             NonOverlap += 1;
-        //         }
-        //     })
-        //     if (NonOverlap == this.eventArr.length) {
-        //         Justbreak = true
-        //     }
-        //     else {
-        //         NonOverlap = 0;
-        //         if (this.slotstart.getHours() <= 20) {
-        //             this.slotstart.setMinutes(this.slotstart.getMinutes() + 30);
-        //             this.slotend.setMinutes(this.slotend.getMinutes() + 30);
-        //         }
-        //         else {
-        //             returnfalse = true;
-        //             break;
-        //         }
-        //     }
-
-        // }
-        // if (returnfalse) return false;
-        // return { start: this.slotstart, end: this.slotend }
-
-    }
-    sliceDay(duration) {
-        this.spots = []
-        this.initialDate = new Date(this.startDate);
-        this.endInitialDate = new Date(this.startDate);
-        this.endInitialDate.setMinutes(this.endInitialDate.getMinutes() + duration);
-        while (this.endInitialDate.getDate() <= this.startDate.getDate() + 1) {
-            this.spots.push({ start: new Date(this.initialDate), end: new Date(this.endInitialDate) });
-            this.endInitialDate.setMinutes(this.endInitialDate.getMinutes() + duration);
-            this.initialDate.setMinutes(this.initialDate.getMinutes() + duration);
-        }
-    }
-    printSlots() {
-        console.log({ slots: this.spots })
     }
     overlaps(s_s, s_e, e_s, e_e) {
         s_s = s_s.getTime()
         s_e = s_e.getTime()
         e_s = e_s.getTime()
         e_e = e_e.getTime()
-
         if (s_s > e_e || s_e < e_s) {
             return false
         }
-
         else {
             return true
         }
-
-        if (s_s < e_s && s_e < e_s) {
-            // console.log("case 1")
-            return false;
-        }
-        if (s_s == e_s) {
-            // console.log("case 2")
-            return true;
-        }
-        if (s_s > e_s && s_e <= e_e) {
-            // console.log("case 3")
-            return true;
-        }
-        if (s_s > e_e) {
-            // console.log("case 4")
-            return false;
-        }
-        if (s_s < e_s && s_e < e_e) {
-            // console.log("case 5")
-            return true;
-        }
-        if (s_s < e_s && s_e > e_s) {
-            // console.log("case 6")
-            return true;
-        }
-
-        return false;
     }
     convertEventArr() {
         this.eventArr.forEach((startend, index) => {
@@ -179,22 +75,14 @@ class cal {
         })
     }
     async freeBusyStatus(date) {
-        this.generalDate = date;
         this.authorize(date);
         return this.calendar.freebusy.query(this.check).then((response) => {
             this.eventArr = response.data.calendars["c_jkea5jm4ajhefe5ot1ejnsv788@group.calendar.google.com"].busy;
-            // console.log({ eventarroriginalaa: this.eventArr })
-
             this.convertEventArr()
-            // console.log({ eventarroriginal: this.eventArr })
             return this;
         })
-
     }
     schedule(startDate, endDate) {
-        // console.log(this)
-        // console.log(this.calendarId)
-
         this.event = {
             summary: `reserved`,
             location: `Makerspace`,
@@ -209,13 +97,10 @@ class cal {
                 timeZone: 'America/Chicago',
             },
         }
-        // console.log(this.calendarId, this.event)
         this.calendar.events.insert(
             { calendarId: this.calendarId, resource: this.event },
             err => {
-                // Check for errors and log them if they exist.
                 if (err) return console.error('Error Creating Calender Event:', err)
-                // Else log that the event was created.
                 return console.log('Calendar event successfully created.')
             }
         )
@@ -231,17 +116,17 @@ class cal {
             }
         })
         if (nonoverlapwith == this.eventArr.length) {
-            nonoverlapwith = 0;
             return true
         }
-        this.printTime(startDate, endDate)
-        console.log({ eventlength: this.eventArr.length, nonoverlapwith })
         return false;
     }
     printTime(startdate, enddate) {
         console.log({ start: `${startdate.getHours()} : ${startdate.getMinutes()}` })
         console.log({ end: `${enddate.getHours()} : ${enddate.getMinutes()}` })
 
+    }
+    printEvents() {
+        console.log({ eventarr: this.eventArr })
     }
 }
 

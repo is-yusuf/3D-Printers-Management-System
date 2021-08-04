@@ -172,17 +172,27 @@ function schedule(btn) {
         printAvailableSlots(data.availableslots);
     })
 }
-
-
 function updateTextInput(val) {
     document.getElementById('textInput').value = val;
 }
 function updateRange(val) {
     document.getElementById("duration").value = val;
 }
-
-
-
 window.onload = function () {
     updateTextInput(document.getElementById('duration').value)
+    document.getElementById('date').value = formatDate(new Date());
+}
+
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2)
+        month = '0' + month;
+    if (day.length < 2)
+        day = '0' + day;
+
+    return [year, month, day].join('-');
 }

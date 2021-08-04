@@ -55,8 +55,6 @@ class cal {
         this.spots.forEach((spot) => {
             this.eventArr.forEach((event) => {
                 if (!this.overlaps(spot.start, spot.end, event.start, event.end)) {
-                    // console.log(spot.start + "  is added")
-                    // this.updatedslots.push(spot);
                     nonoverlapwith += 1;
                 }
             })
@@ -72,51 +70,55 @@ class cal {
         this.slotstart = new Date(this.generalDate);
         this.slotend = new Date(this.generalDate);
         this.slotend.setMinutes(this.slotend.getMinutes() + durationMinutes);
-        if (this.eventArr.length == 0) {
-            return { start: this.slotstart, end: this.slotend }
-        }
-        let Justbreak = false;
-        let returnfalse = false;
-        while (!Justbreak) {
-            let NonOverlap = 0;
-            this.eventArr.forEach((event) => {
-                if (!this.overlaps(this.slotstart, this.slotend, event.start, event.end)) {
-                    NonOverlap += 1;
-                }
-            })
-            if (NonOverlap == this.eventArr.length) {
-                Justbreak = true
-            }
-            else {
-                NonOverlap = 0;
-                if (!(this.slotstart.getHours() >= 20)) {
-                    this.slotstart.setMinutes(this.slotstart.getMinutes() + 30);
-                    this.slotend.setMinutes(this.slotend.getMinutes() + 30);
-                }
-                else {
-                    returnfalse = true;
-                    break;
-                    this.slotstart = new Date(this.generalDate);
-                    this.slotend = new Date(this.generalDate);
-                    this.slotend.setMinutes(this.slotend.getMinutes() + durationMinutes);
-                    this.slotstart.setDate(this.slotstart.getDate() + 1)
-                    this.slotend.setDate(this.slotend.getDate() + 1)
+        while (!this.checkExactDate(this.slotstart, this.slotend)) {
+            this.slotstart.setMinutes(this.slotstart.getMinutes() + 30);
+            this.slotend.setMinutes(this.slotend.getMinutes() + 30);
 
-                }
+            if (this.slotstart.getHours() > 20) {
+                return false;
             }
-
         }
-        if (returnfalse) return false;
         return { start: this.slotstart, end: this.slotend }
+
+
+        // if (this.eventArr.length == 0) {
+        //     return { start: this.slotstart, end: this.slotend }
+        // }
+        // let Justbreak = false;
+        // let returnfalse = false;
+        // while (!Justbreak) {
+        //     let NonOverlap = 0;
+        //     this.eventArr.forEach((event) => {
+        //         if (!this.overlaps(this.slotstart, this.slotend, event.start, event.end)) {
+        //             NonOverlap += 1;
+        //         }
+        //     })
+        //     if (NonOverlap == this.eventArr.length) {
+        //         Justbreak = true
+        //     }
+        //     else {
+        //         NonOverlap = 0;
+        //         if (this.slotstart.getHours() <= 20) {
+        //             this.slotstart.setMinutes(this.slotstart.getMinutes() + 30);
+        //             this.slotend.setMinutes(this.slotend.getMinutes() + 30);
+        //         }
+        //         else {
+        //             returnfalse = true;
+        //             break;
+        //         }
+        //     }
+
+        // }
+        // if (returnfalse) return false;
+        // return { start: this.slotstart, end: this.slotend }
+
     }
     sliceDay(duration) {
         this.spots = []
         this.initialDate = new Date(this.startDate);
         this.endInitialDate = new Date(this.startDate);
         this.endInitialDate.setMinutes(this.endInitialDate.getMinutes() + duration);
-        // console.log({ initdate: this.endInitialDate, startdate: this.startDate })
-
-        while (this.endInitialDate.getDate() == this.startDate.getDate() && this.endInitialDate.getHours() != 0) {
+        while (this.endInitialDate.getDate() <= this.startDate.getDate() + 1) {
             this.spots.push({ start: new Date(this.initialDate), end: new Date(this.endInitialDate) });
             this.endInitialDate.setMinutes(this.endInitialDate.getMinutes() + duration);
             this.initialDate.setMinutes(this.initialDate.getMinutes() + duration);
@@ -131,11 +133,12 @@ class cal {
         e_s = e_s.getTime()
         e_e = e_e.getTime()
 
-        if (e_s - s_s >= s_s - s_e && s_e > e_s) {
-            return true
-        }
-        else {
+        if (s_s > e_e || s_e < e_s) {
             return false
+        }
+
+        else {
+            return true
         }
 
         if (s_s < e_s && s_e < e_s) {
@@ -216,6 +219,29 @@ class cal {
                 return console.log('Calendar event successfully created.')
             }
         )
+    }
+    checkExactDate(startDate, endDate) {
+        if (this.eventArr.length == 0) {
+            return true
+        }
+        let nonoverlapwith = 0;
+        this.eventArr.forEach((event) => {
+            if (!this.overlaps(startDate, endDate, event.start, event.end)) {
+                nonoverlapwith += 1;
+            }
+        })
+        if (nonoverlapwith == this.eventArr.length) {
+            nonoverlapwith = 0;
+            return true
+        }
+        this.printTime(startDate, endDate)
+        console.log({ eventlength: this.eventArr.length, nonoverlapwith })
+        return false;
+    }
+    printTime(startdate, enddate) {
+        console.log({ start: `${startdate.getHours()} : ${startdate.getMinutes()}` })
+        console.log({ end: `${enddate.getHours()} : ${enddate.getMinutes()}` })
+
     }
 }
 

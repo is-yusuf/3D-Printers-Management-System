@@ -1,7 +1,12 @@
 var outputDiv = document.createElement('dates');
 document.getElementById('accept').style.display = "none";
 document.getElementById('reject').style.display = "none";
-
+let h3;
+let rejectbtn = document.getElementById('reject')
+let acceptbtn = document.getElementById('accept')
+document.getElementById('accept').addEventListener(('click'), () => {
+    confirm(acceptbtn.getAttribute('start'), acceptbtn.getAttribute('end'))
+})
 function DisplayResults() {
     let material = document.getElementById('material').value
     let size = document.getElementById('size').value
@@ -11,6 +16,10 @@ function DisplayResults() {
     output.innerHTML = "this is a placeholder for the printer";
     image.src = "./assets/oofa.png";
 }
+
+/**
+ * Checks with the calendar to see the next available slot and display it to the user
+ */
 function ASAP() {
     let date = document.getElementById('date').value
     let duration = document.getElementById('duration').value
@@ -32,91 +41,72 @@ function ASAP() {
             return;
         }
         else {
+            updateBtnValues(start, end)
             displaydate(start, end)
         }
     })
 
 }
+function updateBtnValues(startdate, enddate) {
+    acceptbtn.setAttribute("start", startdate)
+    acceptbtn.setAttribute("end", startdate)
+    rejectbtn.setAttribute("start", startdate)
+    rejectbtn.setAttribute("end", startdate)
+}
+/**
+ * Displays the current date for the user to accept or reject
+ * @param {date || String} start the start date to display
+ * @param {date || String} end the end date you want to display
+ */
 function displaydate(start, end) {
-    h3 = document.createElement('h3');
+    if (h3 == undefined) {
+        h3 = document.createElement('h3');
+    }
+    updateBtnValues(start, end)
     h3.innerHTML = `${start} <br>  ${end}`;
     document.getElementById('offer').insertBefore(h3, document.getElementById('accept'))
     document.getElementById('accept').style.display = "inline";
     document.getElementById('reject').style.display = "inline";
-    document.getElementById('accept').addEventListener(('click'), () => {
-        confirm(start, end)
-    })
+
+
     document.getElementById('reject').addEventListener(('click'), () => {
-        reject(start, end)
+        reject(acceptbtn.getAttribute('start'), acceptbtn.getAttribute('end'))
     })
 }
-function reject() {
-    window.alert("Choose another day please")
-}
-function checkSchedule() {
-    let date = document.getElementById('date').value
-    let duration = document.getElementById('duration').value
-    let dateAndDuration = { date: date, duration: duration };
-    fetch("/check", {
+/**
+ * rejects a date, adds 30 minutes to the events and checks with the user again
+ * @param {date} start the start date you want to reject  
+ * @param {date} end the end date you want to reject
+ */
+function reject(start, end) {
+    start = new Date(start)
+    end = new Date(end)
+    start.setMinutes(start.getMinutes() + 30)
+    end.setMinutes(end.getMinutes() + 30)
+    fetch("/checkexactdate", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(dateAndDuration)
+        body: JSON.stringify({ start, end })
     }).then(res => {
         return res.json();
 
     }).then((data) => {
-        printAvailableSlots(data.availableslots);
-    })
-
-}
-function printAvailableSlots(slotsArr) {
-    displayDateHeader(slotsArr);
-    displayDateButtons(slotsArr)
-    document.body.appendChild(outputDiv);
-
-}
-function displayDateHeader(slotsArr) {
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"];
-    var title = document.createElement(`h2`);
-
-    dateItem = slotsArr[0];
-    dateItem.start = new Date(dateItem.start)
-    const month = monthNames[dateItem.start.getMonth()];
-    const day = String(dateItem.start.getDate()).padStart(2, '0');
-    const year = dateItem.start.getFullYear();
-    const output = month + '\n' + day + ',' + year;
-    title.innerHTML = `${output}`;
-    outputDiv.appendChild(title);
-    outputDiv.appendChild(document.createElement(`br`));
-}
-function displayDateButtons(slotsArr) {
-    let i = 1;
-    slotsArr.forEach((dateItem, index) => {
-        let btn = document.createElement('button');
-        btn.setAttribute("id", index)
-        btn.setAttribute("start", new Date(dateItem.start))
-        btn.setAttribute("end", new Date(dateItem.end))
-        btn.addEventListener("click", () => {
-            schedule(btn);
-        })
-        dateItem.start = new Date(dateItem.start)
-        dateItem.end = new Date(dateItem.end)
-
-        let start = dateItem.start.getHours() + ":" + dateItem.start.getMinutes() + "__" + dateItem.end.getHours() + ":" + dateItem.end.getMinutes();
-        btn.innerHTML = start
-        outputDiv.appendChild(btn);
-        if (i % 2 == 0) {
-            outputDiv.appendChild(document.createElement(`br`));
+        // console.log(data)
+        if (data) {
+            displaydate(start, end)
         }
-        i++
-
     })
 }
+
+/**
+ * 
+ * @param {date} startdate the start of the date you want to schedule 
+ * @param {date} enddate the end of the date you want to schedule
+ */
 function confirm(startdate, enddate) {
-    let reqbody = { start: startdate, end: enddate }
+    let reqbody = { start: new Date(startdate), end: new Date(enddate) }
     fetch("/schedule", {
         method: 'POST',
         headers: {
@@ -129,25 +119,14 @@ function confirm(startdate, enddate) {
         printAvailableSlots(data.availableslots);
     })
 }
-function schedule(btn) {
-    let btnobject = { start: btn.getAttribute('start'), end: btn.getAttribute('end') }
 
-
-    fetch("/schedule", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(btnobject)
-    }).then(res => {
-        return res.json();
-    }).then((data) => {
-        printAvailableSlots(data.availableslots);
-    })
-}
 function updateTextInput(val) {
     document.getElementById('textInput').value = val;
 }
+/**
+ * Updates the value in the slider.
+ * @param {number} val the value in the slider. 
+ */
 function updateRange(val) {
     document.getElementById("duration").value = val;
 }
@@ -155,6 +134,11 @@ window.onload = function () {
     updateTextInput(document.getElementById('duration').value)
     document.getElementById('date').value = formatDate(new Date());
 }
+/**
+ * Formats a date object to yyyy-mm-dd 
+ * @param {date} date date object you want to format 
+ * @returns {String} String in the form of yyyy-mm-dd
+ */
 function formatDate(date) {
     var d = new Date(date),
         month = '' + (d.getMonth() + 1),

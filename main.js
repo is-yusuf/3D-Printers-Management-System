@@ -8,12 +8,15 @@ app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs")
 app.use(express.json());
 app.use(express.static(__dirname + '/views'));
+
 app.get("/", (req, res) => {
     res.render("index.html");
 })
 
 app.post("/checkexactdate", (req, res) => {
-    res.send(myCalendar.checkExactDate(req.body.start, req.body.end));
+    let start = new Date(req.body.start)
+    let end = new Date(req.body.end)
+    res.send(myCalendar.checkExactDate(start, end));
 })
 
 app.post("/asap", (req, res) => {
@@ -33,6 +36,8 @@ app.post("/asap", (req, res) => {
 })
 
 app.post("/schedule", (req, res) => {
-    myCalendar.schedule(req.body.start, req.body.end);
+    if (myCalendar.checkExactDate(new Date(req.body.start), new Date(req.body.end))) {
+        myCalendar.schedule(req.body.start, req.body.end);
+    }
 })
 app.listen(5500, () => { console.log("listening on port 5500") });

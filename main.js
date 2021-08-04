@@ -18,6 +18,9 @@ app.use(express.static(__dirname + '/views'));
 // rendering the homepage
 app.get("/", (req, res) => {
     res.render("index.html");
+    myCalendar.freeBusyStatus(date).then((ReadyCal) => {
+        myCalendar = ReadyCal;
+    })
 })
 
 // requests sent to /check are being used to check the vacant places in the date provided
@@ -30,13 +33,19 @@ app.post("/check", (req, res) => {
     // console.log({ date })
     let duration = req.body.duration;
     // creates a caldenar instant
-    myCalendar.freeBusyStatus(date).then((ReadyCal) => {
-        // ReadyCal.findSpot(30)
-        myCalendar = ReadyCal
-        res.send({ availableslots: myCalendar.findSpot(30) })
+    //     res.send({ availableslots: myCalendar.findSpot(30) })
 
-    })
+    // myCalendar.freeBusyStatus(date).then((ReadyCal) => {
+    //     // ReadyCal.findSpot(30)
+    //     myCalendar = ReadyCal
+    //     res.send({ availableslots: myCalendar.findSpot(30) })
+
+    // })
 })
+app.post("/checkexactdate", (req, res) => {
+    return cal
+})
+
 app.post("/asap", (req, res) => {
     console.log("________________________________________________________")
     let date = new Date(req.body.date);

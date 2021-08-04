@@ -37,14 +37,14 @@
 
 
         </div>
-        <button type="button" id="submit">submit</button>
+        <button type="button" id="submit" onclick="DisplayResults()">submit</button>
     </form>
     <div>
         <p id="printer"></p>
         <img src="" alt="" id="printerimg">
     </div>
     <br>
-    <button type="button" id="ASAP" onclick="ASAP()">Schedule ASAP</button>
+    <button type="button" id="ASAP" onclick="ASAP()">Schedule First Available date</button>
     <button type="button" id="Preferred">Schedule right after preffered time</button>
 
     <form action="/checking" id="schedule" method="POST">
@@ -57,10 +57,8 @@
         <br>
         <div class="date">
             <label for="date"> please enter a date</label>
-            <input type="date" name="date" id="date" value="2021-07-31">
+            <input type="date" name="date" id="date">
         </div>
-        <button type="button" id="check">check schedule</button>
-        <button type="button" id="schedule" onclick="schedule()">schedule</button>
     </form>
     <div id="offer">
         <h3 id="date"></h3>

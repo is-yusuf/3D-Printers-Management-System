@@ -2,15 +2,6 @@ var outputDiv = document.createElement('dates');
 document.getElementById('accept').style.display = "none";
 document.getElementById('reject').style.display = "none";
 
-document.getElementById("submit").addEventListener(("click"), () => {
-    DisplayResults();
-})
-
-document.getElementById("check").addEventListener(('click'), () => {
-    checkSchedule();
-})
-
-
 function DisplayResults() {
     let material = document.getElementById('material').value
     let size = document.getElementById('size').value
@@ -34,42 +25,34 @@ function ASAP() {
         return res.json();
 
     }).then((data) => {
-
         let start = new Date(data.start)
-
         let end = new Date(data.end)
-
         if (!data) {
             window.alert("the date you entered has no available slots")
             return;
         }
         else {
-            h3 = document.createElement('h3');
-            h3.innerHTML = `${start} <br>  ${end}`;
-            document.getElementById('offer').insertBefore(h3, document.getElementById('accept'))
-            document.getElementById('accept').style.display = "inline";
-            document.getElementById('reject').style.display = "inline";
-            document.getElementById('accept').addEventListener(('click'), () => {
-                confirm(start, end)
-            })
-
-            document.getElementById('reject').addEventListener(('click'), () => {
-                window.alert("please select another date")
-            })
-
-
+            displaydate(start, end)
         }
-
     })
 
 }
-function accept() {
-    confirm(start, end)
+function displaydate(start, end) {
+    h3 = document.createElement('h3');
+    h3.innerHTML = `${start} <br>  ${end}`;
+    document.getElementById('offer').insertBefore(h3, document.getElementById('accept'))
+    document.getElementById('accept').style.display = "inline";
+    document.getElementById('reject').style.display = "inline";
+    document.getElementById('accept').addEventListener(('click'), () => {
+        confirm(start, end)
+    })
+    document.getElementById('reject').addEventListener(('click'), () => {
+        reject(start, end)
+    })
 }
 function reject() {
     window.alert("Choose another day please")
 }
-
 function checkSchedule() {
     let date = document.getElementById('date').value
     let duration = document.getElementById('duration').value
@@ -88,14 +71,12 @@ function checkSchedule() {
     })
 
 }
-
 function printAvailableSlots(slotsArr) {
     displayDateHeader(slotsArr);
     displayDateButtons(slotsArr)
     document.body.appendChild(outputDiv);
 
 }
-
 function displayDateHeader(slotsArr) {
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"];
@@ -134,8 +115,6 @@ function displayDateButtons(slotsArr) {
 
     })
 }
-
-
 function confirm(startdate, enddate) {
     let reqbody = { start: startdate, end: enddate }
     fetch("/schedule", {
@@ -150,12 +129,6 @@ function confirm(startdate, enddate) {
         printAvailableSlots(data.availableslots);
     })
 }
-
-
-
-
-
-
 function schedule(btn) {
     let btnobject = { start: btn.getAttribute('start'), end: btn.getAttribute('end') }
 
@@ -182,7 +155,6 @@ window.onload = function () {
     updateTextInput(document.getElementById('duration').value)
     document.getElementById('date').value = formatDate(new Date());
 }
-
 function formatDate(date) {
     var d = new Date(date),
         month = '' + (d.getMonth() + 1),

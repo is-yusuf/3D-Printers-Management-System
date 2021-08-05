@@ -14,57 +14,65 @@
 </head>
 
 <body>
+    <div class=container>
+        <form action="" id="size&mat">
+            <div class='print-size'>
+                <label for="size">Size in inches</label>
+                <select name="size" id="size">
+                    <option value="less4"> size &lt 4 </option>
+                    <option value="4to9"> 4 &gt size &lt 9 </option>
+                    <option value="more9"> 9 &gt size </option>
 
-    <form action="" id="size&mat">
-        <div class='print-size'>
-            <label for="size">Size in inches</label>
-            <select name="size" id="size">
-                <option value="less4"> size &lt 4 </option>
-                <option value="4to9"> 4 &gt size &lt 9 </option>
-                <option value="more9"> 9 &gt size </option>
+                </select>
+            </div>
+            <div class="material">
+                <label for="material">material</label>
+                <select name="material" id="material">
+                    <option value="PLA" checked> PLA (Prefereed) </option>
+                    <option value="PETG"> PETG </option>
+                    <option value="TPM"> TPM </option>
+                    <option value="ABS"> ABS </option>
 
-            </select>
+                </select>
+
+
+            </div>
+            <button type="button" id="submit" onclick="DisplayResults()">submit</button>
+        </form>
+        <div>
+            <p id="printer"></p>
+            <img src="" alt="" id="printerimg">
         </div>
-        <div class="material">
-            <label for="material">material</label>
-            <select name="material" id="material">
-                <option value="PLA" checked> PLA (Prefereed) </option>
-                <option value="PETG"> PETG </option>
-                <option value="TPM"> TPM </option>
-                <option value="ABS"> ABS </option>
 
-            </select>
-
-
+        <form action="/checking" id="schedule" method="POST">
+            <div class='print-time'>
+                <label for="time" default> printing duration</label>
+                <input type="text" id="textInput" value="" onchange="updateRange(this.value)"> <span id="hr">hr</span>
+                <input type="range" id="duration" name="time" min=".5" max="24" value="5" step=".5" showRange="true"
+                    class="slider" oninput="updateTextInput(this.value)">
+            </div>
+            <br>
+            <div class="date">
+                <label for="date"> please enter a date</label>
+                <input type="date" name="date" id="date">
+            </div>
+            <br>
+        </form>
+        <div class="Options-buttons" style="display: block;">
+            <button type="button" id="ASAP" onclick="ASAP()">Schedule First Available date</button>
+            <button type="button" id="Preferred">Schedule right after preffered time</button>
         </div>
-        <button type="button" id="submit" onclick="DisplayResults()">submit</button>
-    </form>
-    <div>
-        <p id="printer"></p>
-        <img src="" alt="" id="printerimg">
+        <div id="offer" style="display: inline-block;">
+            <h3 id="date"></h3>
+            <button type="button" id=accept>Accept</button>
+            <button type="button" id=reject>Reject</button>
+            <br>
+        </div>
+
     </div>
-    <br>
-    <button type="button" id="ASAP" onclick="ASAP()">Schedule First Available date</button>
-    <button type="button" id="Preferred">Schedule right after preffered time</button>
 
-    <form action="/checking" id="schedule" method="POST">
-        <div class='print-time'>
-            <label for="time" default> printing duration</label>
-            <input type="text" id="textInput" value="" onchange="updateRange(this.value)"> <span id="hr">hr</span>
-            <input type="range" id="duration" name="time" min=".5" max="24" value="5" step=".5" showRange="true"
-                class="slider" oninput="updateTextInput(this.value)">
-        </div>
-        <br>
-        <div class="date">
-            <label for="date"> please enter a date</label>
-            <input type="date" name="date" id="date">
-        </div>
-    </form>
-    <div id="offer">
-        <h3 id="date"></h3>
-        <button type="button" id=accept>Accept</button>
-        <button type="button" id=reject>Reject</button>
-    </div>
+
+
 </body>
 
 

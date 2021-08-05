@@ -7,6 +7,9 @@ let acceptbtn = document.getElementById('accept')
 document.getElementById('accept').addEventListener(('click'), () => {
     confirm(acceptbtn.getAttribute('start'), acceptbtn.getAttribute('end'))
 })
+document.getElementById('reject').addEventListener(('click'), () => {
+    reject(acceptbtn.getAttribute('start'), acceptbtn.getAttribute('end'))
+})
 function DisplayResults() {
     let material = document.getElementById('material').value
     let size = document.getElementById('size').value
@@ -34,24 +37,23 @@ function ASAP() {
         return res.json();
 
     }).then((data) => {
-        let start = new Date(data.start)
-        let end = new Date(data.end)
+
         if (!data) {
             window.alert("the date you entered has no available slots")
             return;
         }
         else {
-            updateBtnValues(start, end)
-            displaydate(start, end)
+            updateBtnValues(data.start, data.end)
+            displaydate(new Date(data.start), new Date(data.end))
         }
     })
 
 }
 function updateBtnValues(startdate, enddate) {
     acceptbtn.setAttribute("start", startdate)
-    acceptbtn.setAttribute("end", startdate)
+    acceptbtn.setAttribute("end", enddate)
     rejectbtn.setAttribute("start", startdate)
-    rejectbtn.setAttribute("end", startdate)
+    rejectbtn.setAttribute("end", enddate)
 }
 /**
  * Displays the current date for the user to accept or reject
@@ -69,9 +71,7 @@ function displaydate(start, end) {
     document.getElementById('reject').style.display = "inline";
 
 
-    document.getElementById('reject').addEventListener(('click'), () => {
-        reject(acceptbtn.getAttribute('start'), acceptbtn.getAttribute('end'))
-    })
+
 }
 /**
  * rejects a date, adds 30 minutes to the events and checks with the user again
@@ -93,7 +93,6 @@ function reject(start, end) {
         return res.json();
 
     }).then((data) => {
-        // console.log(data)
         if (data) {
             displaydate(start, end)
         }

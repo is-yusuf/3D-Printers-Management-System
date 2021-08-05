@@ -73,6 +73,7 @@ function displaydate(start, end) {
 
 
 }
+
 /**
  * rejects a date, adds 30 minutes to the events and checks with the user again
  * @param {date} start the start date you want to reject  

@@ -9,10 +9,15 @@ app.set("view engine", "ejs")
 app.use(express.json());
 app.use(express.static(__dirname + '/views'));
 
+/**
+ * Renders the index page of the website.
+ */
 app.get("/", (req, res) => {
     res.render("index.html");
 })
-
+/**
+ * Connects to the Calendar to check if exact date is available or not.
+ */
 app.post("/checkexactdate", (req, res) => {
     let start = new Date(req.body.start)
     let end = new Date(req.body.end)

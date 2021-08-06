@@ -57,11 +57,10 @@ class cal {
         while (!this.checkExactDate(this.slotstart, this.slotend)) {
             this.slotstart.setMinutes(this.slotstart.getMinutes() + 30);
             this.slotend.setMinutes(this.slotend.getMinutes() + 30);
-            if (this.slotstart.getHours() > 20) {
+            if (this.slotstart.getHours() >= 20) {
                 return false;
             }
         }
-        console.log({ start: this.slotstart, end: this.slotend })
         return { start: this.slotstart, end: this.slotend }
     }
     /**
@@ -88,9 +87,9 @@ class cal {
      * convers the array of events (originally of strings) to an array of dates.
      */
     convertEventArr() {
-        this.eventArr.forEach((startend, index) => {
-            this.eventArr[index].start = new Date(startend.start);
-            this.eventArr[index].end = new Date(startend.end);
+        this.eventArr.map((event) => {
+            event.start = new Date(event.start);
+            event.end = new Date(event.end);
         })
     }
     /**
@@ -142,19 +141,10 @@ class cal {
      * @returns {boolean} true if empty, false if used.
      */
     checkExactDate(startDate, endDate) {
-        if (this.eventArr.length == 0) {
-            return true
+        if (startDate.getHours() > 20) {
+            return false;
         }
-        let nonoverlapwith = 0;
-        this.eventArr.forEach((event) => {
-            if (!this.overlaps(startDate, endDate, event.start, event.end)) {
-                nonoverlapwith += 1;
-            }
-        })
-        if (nonoverlapwith == this.eventArr.length) {
-            return true
-        }
-        return false;
+        return !(this.eventArr.some(event => this.overlaps(startDate, endDate, event.start, event.end)))
     }
     /**
      * Prints the start and end hours and minutes to the terminal in human friendly way without the date.

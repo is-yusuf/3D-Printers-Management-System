@@ -10,10 +10,9 @@
     max-width: 200px;
 }
 .container{
-
-  background-color:var(--grey);
-
-
+height: 100vh;
+  background-color:var(--grey); 
+  padding: 1vh;
 }
 body{
   background-color: var(--themeDarker);

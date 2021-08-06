@@ -74,6 +74,10 @@ function displaydate(start, end) {
 
 }
 
+function showEventDate(start, end) {
+
+}
+
 /**
  * rejects a date, adds 30 minutes to the events and checks with the user again
  * @param {date} start the start date you want to reject  
@@ -82,6 +86,10 @@ function displaydate(start, end) {
 function reject(start, end) {
     start = new Date(start)
     end = new Date(end)
+    if (start.getHours() >= 20) {
+        window.alert("the date you entered has no available slots")
+
+    }
     start.setMinutes(start.getMinutes() + 30)
     end.setMinutes(end.getMinutes() + 30)
     fetch("/checkexactdate", {
@@ -96,6 +104,9 @@ function reject(start, end) {
     }).then((data) => {
         if (data) {
             displaydate(start, end)
+        }
+        else {
+            console.log('needs to be implemented')
         }
     })
 }

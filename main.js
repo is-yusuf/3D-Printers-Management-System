@@ -1,48 +1,58 @@
-// importing googleapis for the calendar
 const { google } = require('googleapis');
 const { cal } = require("./Calender");
-let myCalendar = new cal();
-
-// importing express for the server side
 const express = require('express');
 const { Console } = require('console');
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs")
-// this is becasue express doesn't know how to read request of json
 app.use(express.json());
-// in order for express to know the directory of front end
 app.use(express.static(__dirname + '/views'));
+let myCalendar = new cal();
+var session = require('express-session')
 
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true }
+}))
 
-// rendering the homepage
+/**
+ * Renders the index page of the website.
+ */
 app.get("/", (req, res) => {
     res.render("index.html");
 })
+/**
+ * Connects to the Calendar to check if exact date is available or not.
+ */
+app.post("/checkexactdate", (req, res) => {
+    let start = new Date(req.body.start)
+    let end = new Date(req.body.end)
+    res.send(myCalendar.checkExactDate(start, end));
+})
 
-// requests sent to /check are being used to check the vacant places in the date provided
-app.post("/check", (req, res) => {
-    // console.log("________________________________________________________")
+app.post("/asap", (req, res) => {
+    console.log("________________________________________________________")
     let date = new Date(req.body.date);
-    // console.log(date)
-    // adding 8 becasue we want to start the day at 8am
-    date.setHours(date.getHours() + 8);
-    // console.log({ date })
-    let duration = req.body.duration;
-    // creates a caldenar instant
+    let calID = req.body.calID;
+    date.setHours(date.getHours() + 14);
+    myCalendar.authorize(calID);
     myCalendar.freeBusyStatus(date).then((ReadyCal) => {
-        // ReadyCal.findSpot(30)
-        myCalendar = ReadyCal
-        res.send({ availableslots: myCalendar.findSpot(30) })
-
+        myCalendar = ReadyCal;
+        let CalendarResponse = ReadyCal.findFirstSpot(req.body.duration * 60)
+        if (!CalendarResponse) {
+            res.send(false);
+        }
+        else {
+            res.send(CalendarResponse)
+        }
     })
 })
 
 app.post("/schedule", (req, res) => {
-    startDate = new Date(req.body.start);
-    endDate = new Date(req.body.end);
-    console.log(startDate, endDate)
-    myCalendar.schedule(startDate, endDate);
-    console.log("scheduled");
+    if (myCalendar.checkExactDate(new Date(req.body.start), new Date(req.body.end))) {
+        myCalendar.schedule(req.body.start, req.body.end);
+    }
 })
 app.listen(5500, () => { console.log("listening on port 5500") });

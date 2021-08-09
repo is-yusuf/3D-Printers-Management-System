@@ -1,11 +1,21 @@
-:root {
-  --theme: #4CAF50;
-  --themeDarker: #4d9450;
-  --white: #ffffff;
+/* :root {
+  --theme: #003069;
+  --themebackground : #041f41;
+  --themeDarker: #132744;
+  --grey2: #f3e1e1;
+  --grey: #b9b5a1;
 }
 @import url('https://fonts.googleapis.com/css2?family=Georama:wght@200;400&display=swap');
 #printerimg{
     max-width: 200px;
+}
+.container{
+height: 100vh;
+  background-color:var(--grey); 
+  padding: 1vh;
+}
+body{
+  background-color: var(--themeDarker);
 }
       
 button {
@@ -15,7 +25,7 @@ button {
   font-size: 15px;
   color: #FFFFFF;
   padding: 8px;
-  /* width: 200px; */
+  /* width: 200px; 
   text-align: center;
   transition-duration: 0.4s;
   text-decoration: none;
@@ -23,6 +33,9 @@ button {
   cursor: pointer;
   margin: 5px;
   border-radius: 5px;
+}
+button:hover{
+  background-color: var(--themeDarker);
 }
 
 button:after {
@@ -96,7 +109,7 @@ input[type=range]::-webkit-slider-runnable-track {
   height: 8.4px;
   cursor: pointer;
   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-  background: #4CAF50;
+  background: var(--theme);
   border-radius: 1.3px;
   border: 0.2px solid #010101;
 }
@@ -112,7 +125,7 @@ input[type=range]::-webkit-slider-thumb {
   margin-top: -4px;
 }
 input[type=range]:focus::-webkit-slider-runnable-track {
-  background: var(--themeDarker);
+  background: var(--theme);
 }
 input[type=range]::-moz-range-track {
   width: 100%;
@@ -167,4 +180,24 @@ input[type=range]:focus::-ms-fill-lower {
 }
 input[type=range]:focus::-ms-fill-upper {
   background: #367ebd;
+} */
+
+.presclid{
+  position: relative;
+}
+
+#prec::before{
+  position:absolute;
+  top: 78px;
+  content: "Low precesion";
+  font-size: 6px;
+  height: 10px;
+}
+#prec::after{
+  position:absolute;
+  top: 78px;
+  left: 80px;
+  content: "Low precesion";
+  font-size: 6px;
+  height: 10px;
 }

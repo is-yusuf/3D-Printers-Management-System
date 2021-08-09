@@ -1,4 +1,4 @@
-:root {
+/* :root {
   --theme: #003069;
   --themebackground : #041f41;
   --themeDarker: #132744;
@@ -25,7 +25,7 @@ button {
   font-size: 15px;
   color: #FFFFFF;
   padding: 8px;
-  /* width: 200px; */
+  /* width: 200px; 
   text-align: center;
   transition-duration: 0.4s;
   text-decoration: none;
@@ -180,4 +180,24 @@ input[type=range]:focus::-ms-fill-lower {
 }
 input[type=range]:focus::-ms-fill-upper {
   background: #367ebd;
+} */
+
+.presclid{
+  position: relative;
+}
+
+#prec::before{
+  position:absolute;
+  top: 78px;
+  content: "Low precesion";
+  font-size: 6px;
+  height: 10px;
+}
+#prec::after{
+  position:absolute;
+  top: 78px;
+  left: 80px;
+  content: "Low precesion";
+  font-size: 6px;
+  height: 10px;
 }

@@ -13,12 +13,29 @@ document.getElementById('reject').addEventListener(('click'), () => {
 function DisplayResults() {
     let material = document.getElementById('material').value
     let size = document.getElementById('size').value
+    let prec = document.querySelector("#prec").value
+    console.log({ material, size, prec });
     // do the calculation using data collected
     let output = document.getElementById('printer');
     let image = document.getElementById('printerimg');
     output.innerHTML = "this is a placeholder for the printer";
     image.src = "./assets/oofa.png";
+    image.style.display = "block"
 }
+
+function choosePrinter(material, size, prec) {
+    let printers = {
+        miniv2: { src: "./assets/imgs/miniv2", Link: "dwalin.make-it.cc" },
+        prusa: { src: "./assets/imgs/prusa", Link: "dwalin.make-it.cc" },
+        taz4: { src: "./assets/imgs/taz4", Link: "dwalin.make-it.cc" },
+        taz6: { src: "./assets/imgs/taz6", Link: "dwalin.make-it.cc" },
+    }
+    if (size == "more9") {
+        delete printers.miniv2;
+        delete printers.prusa;
+    }
+}
+
 
 /**
  * Checks with the calendar to see the next available slot and display it to the user
@@ -87,7 +104,7 @@ function reject(start, end) {
     start = new Date(start)
     end = new Date(end)
     if (start.getHours() >= 20) {
-        window.alert("the date you entered has no available slots")
+        window.alert("the date you entered has no more available slots")
 
     }
     start.setMinutes(start.getMinutes() + 30)

@@ -1,6 +1,5 @@
 const { google } = require('googleapis');
 const { cal } = require("./Calender");
-let myCalendar = new cal();
 const express = require('express');
 const { Console } = require('console');
 const app = express();
@@ -8,6 +7,15 @@ app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs")
 app.use(express.json());
 app.use(express.static(__dirname + '/views'));
+let myCalendar = new cal();
+var session = require('express-session')
+
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true }
+}))
 
 /**
  * Renders the index page of the website.
@@ -27,7 +35,9 @@ app.post("/checkexactdate", (req, res) => {
 app.post("/asap", (req, res) => {
     console.log("________________________________________________________")
     let date = new Date(req.body.date);
+    let calID = req.body.calID;
     date.setHours(date.getHours() + 14);
+    myCalendar.authorize(calID);
     myCalendar.freeBusyStatus(date).then((ReadyCal) => {
         myCalendar = ReadyCal;
         let CalendarResponse = ReadyCal.findFirstSpot(req.body.duration * 60)

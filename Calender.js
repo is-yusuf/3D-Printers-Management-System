@@ -7,12 +7,12 @@ class cal {
     /**
      * Authorizes and creates the auth object.
      */
-    authorize() {
+    authorize(calID) {
         this.scopes = 'https://www.googleapis.com/auth/calendar';
         this.privateKey = credentials.private_key;
         this.clientEmail = credentials.client_email;
         this.spots = []
-        this.calendarId = "c_jkea5jm4ajhefe5ot1ejnsv788@group.calendar.google.com"
+        this.calendarId = calID;
         this.auth = new google.auth.JWT(
             this.clientEmail,
             null,
@@ -98,10 +98,9 @@ class cal {
      * @returns {calendar} the ready calendar object with attributes set.
      */
     async freeBusyStatus(date) {
-        this.authorize();
         this.setDates(date);
         return this.calendar.freebusy.query(this.check).then((response) => {
-            this.eventArr = response.data.calendars["c_jkea5jm4ajhefe5ot1ejnsv788@group.calendar.google.com"].busy;
+            this.eventArr = response.data.calendars[this.calendarId].busy;
             this.convertEventArr()
             return this;
         })

@@ -1,41 +1,69 @@
-var outputDiv = document.createElement('dates');
-document.getElementById('accept').style.display = "none";
-document.getElementById('reject').style.display = "none";
-let h3;
-let rejectbtn = document.getElementById('reject')
-let acceptbtn = document.getElementById('accept')
-document.getElementById('accept').addEventListener(('click'), () => {
-    confirm(acceptbtn.getAttribute('start'), acceptbtn.getAttribute('end'))
-})
-document.getElementById('reject').addEventListener(('click'), () => {
-    reject(acceptbtn.getAttribute('start'), acceptbtn.getAttribute('end'))
-})
+initialize.call(this);
+/**
+ * updates values of slider and input
+ * adds event listener to buttons
+ * initializes some global variables
+ */
+function initialize() {
+    var outputDiv = document.createElement('dates');
+    document.getElementById('accept').style.display = "none";
+    document.getElementById('reject').style.display = "none";
+    let h3;
+    let rejectbtn = document.getElementById('reject')
+    let acceptbtn = document.getElementById('accept')
+    document.getElementById('accept').addEventListener(('click'), () => {
+        confirm(acceptbtn.getAttribute('start'), acceptbtn.getAttribute('end'))
+    })
+    document.getElementById('reject').addEventListener(('click'), () => {
+        reject(acceptbtn.getAttribute('start'), acceptbtn.getAttribute('end'))
+    })
+}
+/**
+ * Gets the values from input fields and displays the printer image
+ */
 function DisplayResults() {
     let material = document.getElementById('material').value
     let size = document.getElementById('size').value
     let prec = document.querySelector("#prec").value
     console.log({ material, size, prec });
-    // do the calculation using data collected
+    let printer = choosePrinter(material, size, prec);
     let output = document.getElementById('printer');
     let image = document.getElementById('printerimg');
-    output.innerHTML = "this is a placeholder for the printer";
-    image.src = "./assets/oofa.png";
+    output.innerHTML = printer.text;
+    image.src = printer.src;
     image.style.display = "block"
+    image.style.width = "100px";
 }
 
+/**
+ * decided which printer to use according to parameters provided
+ * @param {String} material material used 
+ * @param {String} size size of print (less4,4to9,more9) 
+ * @param {String} prec preciseness vs speed (1 to 3) 
+ * @returns {Printer{src:"src of image", Link:"link to insturctions" ,text:"text shown" }
+ */
 function choosePrinter(material, size, prec) {
-    let printers = {
-        miniv2: { src: "./assets/imgs/miniv2", Link: "dwalin.make-it.cc" },
-        prusa: { src: "./assets/imgs/prusa", Link: "dwalin.make-it.cc" },
-        taz4: { src: "./assets/imgs/taz4", Link: "dwalin.make-it.cc" },
-        taz6: { src: "./assets/imgs/taz6", Link: "dwalin.make-it.cc" },
-    }
+    let miniv2 = { src: "./assets/imgs/miniv2.jpg", Link: "dwalin.make-it.cc", text: "miniv2", calID: "placeholder" }
+    let prusa = { src: "./assets/imgs/prusa.jpg", Link: "dwalin.make-it.cc", text: "prusa", calID: "placeholder" }
+    let taz4 = { src: "./assets/imgs/taz4.jpg", Link: "dwalin.make-it.cc", text: "taz4", calID: "placeholder" }
+    let taz6 = { src: "./assets/imgs/taz6.jpg", Link: "dwalin.make-it.cc", text: "taz6", calID: "placeholder" }
+
     if (size == "more9") {
-        delete printers.miniv2;
-        delete printers.prusa;
+        if (prec == 1) {
+            return taz4;
+        }
+        return taz6;
+    }
+    else if (size == "less4") {
+        return miniv2;
+    }
+    else if (size == "4to9") {
+        if (prec == 1) {
+            return taz4
+        }
+        return prusa;
     }
 }
-
 
 /**
  * Checks with the calendar to see the next available slot and display it to the user

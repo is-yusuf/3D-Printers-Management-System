@@ -1,23 +1,16 @@
-initialize.call(this);
-/**
- * updates values of slider and input
- * adds event listener to buttons
- * initializes some global variables
- */
-function initialize() {
-    var outputDiv = document.createElement('dates');
-    document.getElementById('accept').style.display = "none";
-    document.getElementById('reject').style.display = "none";
-    let h3;
-    let rejectbtn = document.getElementById('reject')
-    let acceptbtn = document.getElementById('accept')
-    document.getElementById('accept').addEventListener(('click'), () => {
-        confirm(acceptbtn.getAttribute('start'), acceptbtn.getAttribute('end'))
-    })
-    document.getElementById('reject').addEventListener(('click'), () => {
-        reject(acceptbtn.getAttribute('start'), acceptbtn.getAttribute('end'))
-    })
-}
+let outputDiv = document.createElement('dates');
+document.getElementById('accept').style.display = "none";
+document.getElementById('reject').style.display = "none";
+let h3;
+window.rejectbtn = document.getElementById('reject')
+window.acceptbtn = document.getElementById('accept')
+document.getElementById('accept').addEventListener(('click'), () => {
+    confirm(acceptbtn.getAttribute('start'), acceptbtn.getAttribute('end'))
+})
+document.getElementById('reject').addEventListener(('click'), () => {
+    reject(acceptbtn.getAttribute('start'), acceptbtn.getAttribute('end'))
+})
+let calID;
 /**
  * Gets the values from input fields and displays the printer image
  */
@@ -25,7 +18,6 @@ function DisplayResults() {
     let material = document.getElementById('material').value
     let size = document.getElementById('size').value
     let prec = document.querySelector("#prec").value
-    console.log({ material, size, prec });
     let printer = choosePrinter(material, size, prec);
     let output = document.getElementById('printer');
     let image = document.getElementById('printerimg');
@@ -33,6 +25,7 @@ function DisplayResults() {
     image.src = printer.src;
     image.style.display = "block"
     image.style.width = "100px";
+    calID = printer.calID;
 }
 
 /**
@@ -43,25 +36,27 @@ function DisplayResults() {
  * @returns {Printer{src:"src of image", Link:"link to insturctions" ,text:"text shown" }
  */
 function choosePrinter(material, size, prec) {
-    let miniv2 = { src: "./assets/imgs/miniv2.jpg", Link: "dwalin.make-it.cc", text: "miniv2", calID: "placeholder" }
-    let prusa = { src: "./assets/imgs/prusa.jpg", Link: "dwalin.make-it.cc", text: "prusa", calID: "placeholder" }
-    let taz4 = { src: "./assets/imgs/taz4.jpg", Link: "dwalin.make-it.cc", text: "taz4", calID: "placeholder" }
-    let taz6 = { src: "./assets/imgs/taz6.jpg", Link: "dwalin.make-it.cc", text: "taz6", calID: "placeholder" }
+
+    let balin = { src: "./assets/imgs/balin.jpg", Link: "dwalin.make-it.cc", text: "miniv2", calID: "c_3jgvbprejl4t77q38a2k3obs0c@group.calendar.google.com" }
+    let dwalin = { src: "./assets/imgs/miniv2.jpg", Link: "dwalin.make-it.cc", text: "miniv2", calID: "c_ed1lt228ffjpd5sdgc0uamprg4@group.calendar.google.com" }
+    let thorin = { src: "./assets/imgs/prusa.jpg", Link: "dwalin.make-it.cc", text: "prusa", calID: "c_sjipjk55n0kjfkdl3kl3i0bqoo@group.calendar.google.com" }
+    let fili = { src: "./assets/imgs/taz4.jpg", Link: "dwalin.make-it.cc", text: "taz4", calID: "c_nldd7mhr8ip3kb9apg7aerb634@group.calendar.google.com" }
+    let kili = { src: "./assets/imgs/taz6.jpg", Link: "dwalin.make-it.cc", text: "taz6", calID: "c_gu67pim474cml15g40j0r8ni9k@group.calendar.google.com" }
 
     if (size == "more9") {
         if (prec == 1) {
-            return taz4;
+            return fili;
         }
-        return taz6;
+        return kili;
     }
     else if (size == "less4") {
-        return miniv2;
+        return balin;
     }
     else if (size == "4to9") {
-        if (prec == 1) {
-            return taz4
+        if (prec < 3) {
+            return thorin
         }
-        return prusa;
+        return fili;
     }
 }
 
@@ -69,15 +64,19 @@ function choosePrinter(material, size, prec) {
  * Checks with the calendar to see the next available slot and display it to the user
  */
 function ASAP() {
+    if (calID == undefined) {
+        window.alert("Please fill the first part of the form to select a printer")
+        return
+    }
     let date = document.getElementById('date').value
     let duration = document.getElementById('duration').value
-    let dateAndDuration = { date: date, duration: duration };
+    let reqbody = { date: date, duration: duration, calID };
     fetch("/asap", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(dateAndDuration)
+        body: JSON.stringify(reqbody)
     }).then(res => {
         return res.json();
 

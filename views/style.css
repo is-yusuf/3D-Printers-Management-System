@@ -181,23 +181,99 @@ input[type=range]:focus::-ms-fill-lower {
 input[type=range]:focus::-ms-fill-upper {
   background: #367ebd;
 } */
+body{
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif  ;
+    font-size: 1.1em;
+}
 
-.presclid{
+.container{
+  display: flexbox;
+  margin: .5em;
+  padding: 9px;
+
+}
+
+button {
+  margin-top: .5em;
+    border: 0px;
+    font-size: small;
+    background-color: #0075ff;
+    box-shadow: 1px 1px 7px 1px black;
+    color: white;
+    width: auto;
+    height: 35px;
+    border-radius: 1px;
+    box-shadow: 8px 10px 20px 0 rgb(46 61 73 / 15%);
+    -webkit-border-radius: 1px;
+    -moz-border-radius: 1px;
+    -ms-border-radius: 1px;
+    -o-border-radius: 1px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif  ;
+}
+button:hover{
+    background-color: #066ee6;
+    width: 105 auto;
+    transition: 500ms;
+    -webkit-transition: 500ms;
+    -moz-transition: 500ms;
+    -ms-transition: 500ms;
+    -o-transition: 500ms;
+    cursor:pointer;
+}
+button:disabled{
+  background-color: grey;
+}
+
+div{
+  margin-bottom: 1em;
+}
+label::before{
+  content: "";
+  border-left: 2px solid #0075ff;
+  margin-right: .6em;
+}
+
+#prec{
   position: relative;
+  bottom: -2px;
 }
 
-#prec::before{
-  position:absolute;
-  top: 78px;
-  content: "Low precesion";
-  font-size: 6px;
-  height: 10px;
+#accept{
+background-color: #2e7d32;
 }
-#prec::after{
-  position:absolute;
-  top: 78px;
-  left: 80px;
-  content: "Low precesion";
-  font-size: 6px;
-  height: 10px;
+#accept:hover{
+  background-color: #005005;
+}
+#reject{
+  background-color: #c62828;
+}
+#reject:hover{
+  background-color: #8e0000;
+}
+html{
+  background-color: #fdfafa;
+}
+
+iframe{
+  top: 20%;
+  right: 20%;
+}
+
+
+.mw-wiki-logo {
+  width: 2em;
+  height: 2em;
+    background-image: -webkit-linear-gradient(transparent,transparent),url(images/wikiLogo_noText.svg);
+    background-image: linear-gradient(transparent,transparent),url(images/wikiLogo_noText.svg);
+    background-size: 135px auto;
+}
+
+.maker{
+  width: 5rem;
+  
+}
+
+.logo{
+  border-bottom: 2px solid #0075ff;
+  margin-bottom: 2em;
 }

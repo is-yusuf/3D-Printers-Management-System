@@ -1,4 +1,9 @@
 let outputDiv = document.createElement('dates');
+<<<<<<< HEAD
+=======
+document.getElementById('accept').style.display = "none";
+document.getElementById('reject').style.display = "none";
+>>>>>>> parent of 951b6e9 (styling)
 let h3;
 window.rejectbtn = document.getElementById('reject')
 window.acceptbtn = document.getElementById('accept')
@@ -25,15 +30,6 @@ function DisplayResults() {
     image.src = printer.src;
     image.style.display = "block"
     calID = printer.calID;
-    enableInputs()
-
-}
-function enableInputs() {
-    document.querySelector('#textInput').disabled = false
-    document.querySelector('#duration').disabled = false
-    document.querySelector('#date').disabled = false
-    document.querySelector('#ASAP').disabled = false
-
 }
 
 /**
@@ -118,11 +114,16 @@ function displaydate(start, end) {
     }
     updateBtnValues(start, end)
     h3.innerHTML = `${start} <br>  ${end}`;
-    document.getElementById('offer').appendChild(h3);
-    // document.getElementById('offer').insertBefore(h3, document.getElementById('accept'))
-    document.getElementById('details').style.display = 'block';
-    document.getElementById('name').disabled = false
-    document.getElementById('email').disabled = false
+    document.getElementById('offer').insertBefore(h3, document.getElementById('accept'))
+    document.getElementById('accept').style.display = "inline";
+    document.getElementById('reject').style.display = "inline";
+
+
+
+}
+
+function showEventDate(start, end) {
+
 }
 
 /**

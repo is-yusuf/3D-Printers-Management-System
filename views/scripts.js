@@ -1,5 +1,4 @@
 let outputDiv = document.createElement('dates');
-
 let h3;
 window.rejectbtn = document.getElementById('reject')
 window.acceptbtn = document.getElementById('accept')
@@ -20,10 +19,11 @@ function DisplayResults() {
     let printer = choosePrinter(material, size, prec);
     let output = document.getElementById('printer');
     let image = document.getElementById('printerimg');
+    let div_image = document.querySelector(".printer-result");
+    div_image.hidden = false;
     output.innerHTML = printer.text;
     image.src = printer.src;
     image.style.display = "block"
-    image.style.width = "100px";
     calID = printer.calID;
     enableInputs()
 

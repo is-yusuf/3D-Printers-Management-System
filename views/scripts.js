@@ -24,6 +24,8 @@ function DisplayResults() {
     output.innerHTML = printer.text;
     image.src = printer.src;
     image.style.display = "block"
+    document.querySelector('.describtion').hidden = false
+
     calID = printer.calID;
     enableInputs()
 

@@ -42,7 +42,7 @@ button:disabled{
 }
 
 div{
-  margin-bottom: 1em;
+  margin-bottom: .5em;
 }
 label::before{
   content: "";
@@ -101,14 +101,13 @@ text-decoration: none;
 header{
   display: flex;
   flex-direction: row;
-}
+  align-content: flex-start;
+  }
 .printer{
   width: calc(200%/3);
   text-align: center;
 }
-.container{
-  width: calc(100%/3);
-}
+
 #printerimg{
   height: 10em;
 }
@@ -116,4 +115,15 @@ header{
 .printer-result{
   display: flex;
   flex-direction: row;
+}
+.describtion{
+  margin-left: 2em;
+  width: 20em;
+}
+#printer{
+  margin: 0;
+  border-bottom: 2px solid grey;;
+  font-weight: bold;
+  font-size: 2em;
+  font-variant-caps: all-petite-caps;
 }

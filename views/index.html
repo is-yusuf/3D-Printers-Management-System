@@ -7,89 +7,122 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel=Stylesheet type="text/css" href="style.css">
     <title>Document</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Hahmlet:wght@200;900&display=swap');
-    </style>
+
+
+
 
 </head>
 
 <body>
 
-    <div class=container>
-
+    <header>
         <div class=logo>
             <a class=logo href="https://make-it.cc/wiki/index.php/Main_Page" target="_blank">
                 <img class=maker
                     src="https://thumbor.forbes.com/thumbor/fit-in/200x200/filters%3Aformat%28jpg%29/https%3A%2F%2Fspecials-images.forbesimg.com%2Fimageserve%2F5d4de73ccb49120009990c17%2F0x0.jpg%3Fbackground%3D000000%26cropX1%3D0%26cropX2%3D416%26cropY1%3D0%26cropY2%3D416"
                     alt="maker logo" href="google.com">
             </a>
-
         </div>
+        <div class=tabs>
+            <a href="https://www.carleton.edu/">
+                <button>Carleton Homepage</button>
+            </a>
+            <a href="https://make-it.cc/wiki">
+                <button>Makerspace Wiki</button>
 
-        <div id=" size-mat-precesion">
-            <div class='print-size'>
-                <label for="size">Size in inches</label>
-                <select name="size" id="size">
-                    <option value="less4"> size &lt 4 </option>
-                    <option value="4to9"> 4 &gt size &lt 9 </option>
-                    <option value="more9"> 9 &gt size </option>
+            </a>
+            <a href="https://github.com/CC-IS">
+                <button>Makerspace GitHub</button>
 
-                </select>
+            </a>
+        </div>
+    </header>
+    <div class=page>
+        <div class=container>
+
+            <div id=" size-mat-precesion">
+                <div class='print-size'>
+                    <label for="size">Size in inches</label>
+                    <select name="size" id="size">
+                        <option value="less4"> size &lt 4 </option>
+                        <option value="4to9"> 4 &gt size &lt 9 </option>
+                        <option value="more9"> 9 &gt size </option>
+                    </select>
+                </div>
+                <div class="material">
+                    <label for="material">material</label>
+                    <select name="material" id="material">
+                        <option value="PLA" checked> PLA (Prefereed) </option>
+                        <option value="PETG"> PETG </option>
+                        <option value="TPM"> TPM </option>
+                        <option value="ABS"> ABS </option>
+
+                    </select>
+                </div>
+                <div class="precesion">
+                    <label for="prec">precesion level</label>
+                    <input type="range" name=prec min=1 max=3 step=1 id="prec">
+                </div>
+                <button type="button" id="submit" onclick="DisplayResults()">submit</button>
+
             </div>
-            <div class="material">
-                <label for="material">material</label>
-                <select name="material" id="material">
-                    <option value="PLA" checked> PLA (Prefereed) </option>
-                    <option value="PETG"> PETG </option>
-                    <option value="TPM"> TPM </option>
-                    <option value="ABS"> ABS </option>
+            <div class="printer-result" hidden>
 
-                </select>
+
+                <div class=printer-img-name>
+                    <h3 id="printer"></h3>
+                    <img src="" alt="Printer's Image" id="printerimg" style="display: none;">
+                </div>
+
+                <div class="describtion">
+                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Neque mollitia tenetur sed illo, ipsum
+                    possimus voluptatibus, tempore eveniet ipsa nesciunt numquam tempora officiis consequatur
+                    praesentium nihil quisquam repellendus. Magnam, officia!
+                </div>
+
             </div>
-            <div class="precesion">
-                <label for="prec">precesion level</label>
-                <input type="range" name=prec min=1 max=3 step=1 id="prec">
+
+
+
+            <div class=printer-scheduling>
+                <div class='print-time'>
+                    <label for="time" default> printing duration</label>
+                    <input type="text" id="textInput" disabled onchange="updateRange(this.value)"> <span
+                        id="hr">hr</span>
+                    <input type="range" disabled id="duration" name="time" min=".5" max="24" value="5" step=".5"
+                        showRange="true" class="slider" oninput="updateTextInput(this.value)">
+                </div>
+                <div class="date">
+                    <label for="date"> please enter a date</label>
+                    <input type="date" disabled name="date" id="date">
+                </div>
             </div>
-            <button type="button" id="submit" onclick="DisplayResults()">submit</button>
-
-        </div>
-
-        <div class="printer-result">
-            <p id="printer"></p>
-            <img src="" alt="Printer's Image" id="printerimg" width="400" style="display: none;">
-        </div>
-
-        <div class=printer-scheduling>
-            <div class='print-time'>
-                <label for="time" default> printing duration</label>
-                <input type="text" id="textInput" disabled onchange="updateRange(this.value)"> <span id="hr">hr</span>
-                <input type="range" disabled id="duration" name="time" min=".5" max="24" value="5" step=".5"
-                    showRange="true" class="slider" oninput="updateTextInput(this.value)">
+            <div class="Options-buttons" style="display: block;">
+                <button type="button" id="ASAP" disabled onclick="ASAP()">Schedule First Available date</button>
+                <button type="button" id="Preferred" hidden>Schedule right after preffered time</button>
             </div>
-            <div class="date">
-                <label for="date"> please enter a date</label>
-                <input type="date" disabled name="date" id="date">
+            <div id="offer" style="display: block;">
+                <h3 id="date"></h3>
+            </div>
+            <div id=details style="display: none;">
+                <label for="name">Name </label>
+                <input type="text" id=name name="name" disabled>
+                <br>
+                <label for="email">Email</label>
+                <input type="email" id=email name="email" disabled>
+                <br>
+                <button type="button" id=accept>Accept</button>
+                <button type="button" id=reject>Reject</button>
+            </div>
+
+        </div>
+        <!-- <div class=printer>
+            <div class="printer-result">
+                <h3 id="printer"></h3>
+                <img src="" alt="Printer's Image" id="printerimg" style="display: none;">
             </div>
         </div>
-        <div class="Options-buttons" style="display: block;">
-            <button type="button" id="ASAP" disabled onclick="ASAP()">Schedule First Available date</button>
-            <button type="button" id="Preferred" hidden>Schedule right after preffered time</button>
-        </div>
-        <div id="offer" style="display: block;">
-            <h3 id="date"></h3>
-        </div>
-        <div id=details style="display: none;">
-            <label for="name">Name </label>
-            <input type="text" id=name name="name" disabled>
-            <br>
-            <label for="email">Email</label>
-            <input type="email" id=email name="email" disabled>
-            <br>
-            <button type="button" id=accept>Accept</button>
-            <button type="button" id=reject>Reject</button>
-        </div>
-
-    </div>
+    </div> -->
 
 </body>
 

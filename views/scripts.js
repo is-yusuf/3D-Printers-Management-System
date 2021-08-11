@@ -1,9 +1,4 @@
 let outputDiv = document.createElement('dates');
-<<<<<<< HEAD
-=======
-document.getElementById('accept').style.display = "none";
-document.getElementById('reject').style.display = "none";
->>>>>>> parent of 951b6e9 (styling)
 let h3;
 window.rejectbtn = document.getElementById('reject')
 window.acceptbtn = document.getElementById('accept')
@@ -14,6 +9,7 @@ document.getElementById('reject').addEventListener(('click'), () => {
     reject(acceptbtn.getAttribute('start'), acceptbtn.getAttribute('end'))
 })
 let calID;
+
 /**
  * Gets the values from input fields and displays the printer image
  */
@@ -30,6 +26,7 @@ function DisplayResults() {
     image.src = printer.src;
     image.style.display = "block"
     calID = printer.calID;
+
 }
 
 /**

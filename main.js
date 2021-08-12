@@ -9,6 +9,13 @@ app.use(express.json());
 app.use(express.static(__dirname + '/views'));
 let myCalendar = new cal();
 var session = require('express-session')
+const { fetchUser } = require("./OctoPrint.js")
+const fetch = require('node-fetch');
+const { sendMail } = require('./emailer')
+const multer = require('multer')
+
+const { saveFile } = require('./fileOperations')
+
 
 app.use(session({
     secret: 'keyboard cat',
@@ -55,4 +62,36 @@ app.post("/schedule", (req, res) => {
         myCalendar.schedule(req.body.start, req.body.end);
     }
 })
+app.post("/apicheck", (req, res) => {
+    console.log(req.rawHeaders)
+    res.send("helloworld")
+})
+
+const upload = multer({
+    dest: "/Gcodes"
+});
+
+app.post("/upload", upload.single('File'), (req, res) => {
+    // console.log(saveFile(req.file));
+    res.status(saveFile(req.file).status)
+        .contentType(saveFile(req.file).contentType)
+        .end(saveFile(req.file).end)
+})
+
+
 app.listen(5500, () => { console.log("listening on port 5500") });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

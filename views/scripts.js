@@ -1,3 +1,4 @@
+
 let outputDiv = document.createElement('dates');
 let h3;
 window.rejectbtn = document.getElementById('reject')
@@ -166,17 +167,36 @@ function reject(start, end) {
  * @param {date} enddate the end of the date you want to schedule
  */
 function confirm(startdate, enddate) {
-    let reqbody = { start: new Date(startdate), end: new Date(enddate) }
-    fetch("/schedule", {
+    let files = document.querySelector("#GCode");
+    sendFile(files.files[0])
+
+    // let reqbody = { start: new Date(startdate), end: new Date(enddate) }
+
+    // fetch("/schedule", {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(reqbody)
+    // }).then(res => {
+    //     return res.json();
+    // }).then((data) => {
+    //     printAvailableSlots(data.availableslots);
+    // })
+}
+
+function sendFile(file) {
+    const formData = new FormData();
+    formData.append('File', file);
+    // formData.append('letters', "ss");
+    fetch("/upload", {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            // "Content-Type": "multipart/form-data"
         },
-        body: JSON.stringify(reqbody)
+        body: formData
     }).then(res => {
-        return res.json();
-    }).then((data) => {
-        printAvailableSlots(data.availableslots);
+        console.log(res.body);
     })
 }
 

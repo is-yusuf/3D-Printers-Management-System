@@ -1,22 +1,37 @@
 const { google } = require('googleapis');
 const { cal } = require("./Calender");
+const { fetchUser } = require("./OctoPrint.js")
+const { sendMail } = require('./emailer')
+const { OctoPrint } = require('./OctoPrint')
+
 const express = require('express');
-const { Console } = require('console');
+var session = require('express-session')
+const fetch = require('node-fetch');
+const multer = require('multer')
+
 const app = express();
+let myCalendar = new cal();
+let Octo = new OctoPrint();
+const upload = multer({ dest: "/Gcodes" });
+
 app.use(express.urlencoded({ extended: false }));
-app.set("view engine", "ejs")
 app.use(express.json());
 app.use(express.static(__dirname + '/views'));
-let myCalendar = new cal();
-var session = require('express-session')
-const { fetchUser } = require("./OctoPrint.js")
-const fetch = require('node-fetch');
-const { sendMail } = require('./emailer')
-const multer = require('multer')
-const upload = multer({
-    dest: "/Gcodes"
-});
-const { saveFile } = require('./fileOperations')
+
+
+const { saveFile } = require('./fileOperations');
+let eventsConfirmation = {}
+
+// testing();
+
+function testing() {
+
+    Octo.getPrinterStatus().then((ready) => {
+        console.log(ready);
+    })
+    Octo.selectFile("File.gcode", true)
+}
+
 
 
 app.use(session({
@@ -64,22 +79,21 @@ app.post("/schedule", (req, res) => {
         myCalendar.schedule(req.body.start, req.body.end);
     }
 })
-app.post("/apicheck", (req, res) => {
-    console.log(req.rawHeaders)
-    res.send("helloworld")
-})
 
 app.get("/userConfirm", (req, res) => {
     let event = req.query.event;
+    console.log({ event });
+    res.send("Thanks for confirming!")
 })
 
 
 app.post("/upload", upload.single('File'), (req, res) => {
-    formdata = { ...req.body }
-    res.status(saveFile(req.file, formdata.filename + ".gcode").status)
     // console.log("sending after" + req.body.milliseconds / 60000 + "minute")
-    let content = "Hello World"
-    sendMail(formdata.email, formdata.name, content);
+    // sendMail(formdata.email, formdata.name, formdata.content, formdata.milliseconds);
+    formdata = { ...req.body }
+    Octo.uploadFile(req.file, formdata.filename + ".gcode")
+    // res.status(saveFile(req.file, formdata.filename + ".gcode").status)
+    // sendMail(formdata.email, formdata.name, formdata.content, 5000);
 })
 
 

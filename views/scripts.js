@@ -215,7 +215,11 @@ function sendFile(file) {
     formData.append('milliseconds', date - ((new Date()).getTime()) - 30000 * 60)
     formData.append('email', document.querySelector("#email").value)
     formData.append('name', document.querySelector("#name").value)
-    console.log(username + date)
+    let confirmation_link = `${window.window.location.href}userConfirm?event=${date}`;
+    console.log({ confirmation_link });
+    formData.append('content', `Hello ${document.querySelector("#name").value},
+Our system shows that there is a 3D-print held in queue under your name starting in 30 Minutes.
+To confirm, please click the following link. ${confirmation_link}`)
     fetch("/upload", {
         method: 'POST',
         headers: {

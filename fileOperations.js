@@ -1,9 +1,9 @@
 const path = require("path");
 const fs = require("fs");
-exports.saveFile = function saveFile(file) {
+exports.saveFile = function saveFile(file, name) {
 
     const tempPath = file.path;
-    const targetPath = path.join(__dirname, "./Gcodes/Gcode.gcode");
+    const targetPath = path.join(__dirname, "./Gcodes/", name);
 
     if (path.extname(file.originalname).toLowerCase() === ".gcode") {
         fs.rename(tempPath, targetPath, err => {

@@ -1,41 +1,35 @@
 const { content } = require('googleapis/build/src/apis/content');
 const fetch = require('node-fetch');
 const credentials = require("./views/assets/credentials-cal.json")
-exports.sendMail = function sendMail() {
-
+exports.sendMail = function sendMail(email, name, content) {
+    console.log({ email, name, content });
     fetch("https://api.sendgrid.com/v3/mail/send", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${credentials.sendGrid}`,
         },
-        from: {
-            "email": "no-reply@admin.make-it.cc",
-            "name": "Sam Smith"
-        },
+
         body: JSON.stringify({
             from: {
                 "email": "no-reply@admin.make-it.cc",
-                "name": "Sam Smith"
+                "name": "Maker-Space"
             },
 
             "personalizations":
                 [{
                     "to": [{
-                        "email": "ismaily@carleton.edu",
-                        "name": "John Doe"
+                        "email": email,
+                        "name": name
                     }],
                     "subject": "Hello, World!"
                 }],
 
             "content": [{
                 "type": "text/plain",
-                "value": "Heya!"
+                "value": content
             }],
-            from: {
-                "email": "no-reply@admin.make-it.cc",
-                "name": "Sam Smith"
-            },
+
 
             reply_to: {
                 "email": "sam.smith@example.com",
@@ -45,6 +39,6 @@ exports.sendMail = function sendMail() {
         })
 
     }).then(res => {
-        // console.log(res)
+        console.log(res)
     })
 }

@@ -3,7 +3,7 @@ const { cal } = require("./Calender");
 const express = require('express');
 const { Console } = require('console');
 const app = express();
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs")
 app.use(express.json());
 app.use(express.static(__dirname + '/views'));
@@ -13,7 +13,9 @@ const { fetchUser } = require("./OctoPrint.js")
 const fetch = require('node-fetch');
 const { sendMail } = require('./emailer')
 const multer = require('multer')
-
+const upload = multer({
+    dest: "/Gcodes"
+});
 const { saveFile } = require('./fileOperations')
 
 
@@ -67,15 +69,17 @@ app.post("/apicheck", (req, res) => {
     res.send("helloworld")
 })
 
-const upload = multer({
-    dest: "/Gcodes"
-});
+app.get("/userConfirm", (req, res) => {
+    let event = req.query.event;
+})
+
 
 app.post("/upload", upload.single('File'), (req, res) => {
-    // console.log(saveFile(req.file));
-    res.status(saveFile(req.file).status)
-        .contentType(saveFile(req.file).contentType)
-        .end(saveFile(req.file).end)
+    formdata = { ...req.body }
+    res.status(saveFile(req.file, formdata.filename + ".gcode").status)
+    // console.log("sending after" + req.body.milliseconds / 60000 + "minute")
+    let content = "Hello World"
+    sendMail(formdata.email, formdata.name, content);
 })
 
 

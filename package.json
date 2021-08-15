@@ -1,0 +1,31 @@
+{
+  "name": "3d-printers-scheduler",
+  "version": "1.0.0",
+  "description": "Creating a scheduler website for 3d printers in the makerspace.",
+  "main": "main.js",
+  "scripts": {
+    "test": "node main"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/is-yusuf/3D-printers-schedule.git"
+  },
+  "keywords": [
+    "OctoPrint",
+    "API",
+    "GoogleCalendarAPI"
+  ],
+  "author": "Yusuf M. Ismail",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/is-yusuf/3D-printers-schedule/issues"
+  },
+  "homepage": "https://github.com/is-yusuf/3D-printers-schedule#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "googleapis": "^84.0.0",
+    "multer": "^1.4.3",
+    "node-fetch": "^2.6.1"
+  }
+}

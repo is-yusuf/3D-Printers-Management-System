@@ -1,3 +1,4 @@
+
 let outputDiv = document.createElement('dates');
 let h3;
 window.rejectbtn = document.getElementById('reject')
@@ -137,7 +138,6 @@ function reject(start, end) {
     end = new Date(end)
     if (start.getHours() >= 20) {
         window.alert("the date you entered has no more available slots")
-
     }
     start.setMinutes(start.getMinutes() + 30)
     end.setMinutes(end.getMinutes() + 30)
@@ -155,9 +155,23 @@ function reject(start, end) {
             displaydate(start, end)
         }
         else {
-            console.log('needs to be implemented')
+            if (start.getHours() >= 20) {
+                window.alert("the date you entered has no more available slots")
+            }
+            reject(start, end)
         }
     })
+}
+function checkRequiredFields() {
+    return (Array.from(document.querySelectorAll('input[required]')).reduce((acc, el) => acc && !!el.value, true) && validateEmail(document.querySelector("#email").value));
+}
+
+function validateEmail(email) {
+    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+        return (true)
+    }
+    alert("You have entered an invalid email address!")
+    return (false)
 }
 
 /**
@@ -166,7 +180,19 @@ function reject(start, end) {
  * @param {date} enddate the end of the date you want to schedule
  */
 function confirm(startdate, enddate) {
+    if (!checkRequiredFields()) {
+        window.alert("Please fill all the required fields")
+        return;
+    }
+    let files = document.querySelector("#GCode");
+    sendFile(files.files[0])
+    // schedule(startdate, enddate)
+
+}
+
+function schedule(startdate, enddate) {
     let reqbody = { start: new Date(startdate), end: new Date(enddate) }
+
     fetch("/schedule", {
         method: 'POST',
         headers: {
@@ -177,6 +203,30 @@ function confirm(startdate, enddate) {
         return res.json();
     }).then((data) => {
         printAvailableSlots(data.availableslots);
+    })
+}
+
+function sendFile(file) {
+    const formData = new FormData();
+    formData.append('File', file);
+    let username = document.querySelector("#email").value.slice(0, document.querySelector("#email").value.indexOf("@")).toLowerCase();
+    let date = new Date(acceptbtn.getAttribute('start')).getTime()
+    formData.append('filename', username + date)
+    formData.append('milliseconds', date - ((new Date()).getTime()) - 30000 * 60)
+    formData.append('email', document.querySelector("#email").value)
+    formData.append('name', document.querySelector("#name").value)
+    let confirmation_link = `${window.window.location.href}userConfirm?event=${date}`;
+    console.log({ confirmation_link });
+    formData.append('content', `Hello ${document.querySelector("#name").value},
+Our system shows that there is a 3D-print held in queue under your name starting in 30 Minutes.
+To confirm, please click the following link. ${confirmation_link}`)
+    fetch("/upload", {
+        method: 'POST',
+        headers: {
+            // "Content-Type": "multipart/form-data"
+        },
+        body: formData
+    }).then(res => {
     })
 }
 

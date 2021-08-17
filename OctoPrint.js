@@ -80,7 +80,6 @@ exports.OctoPrint = class OctoPrint {
 }
 
 
-
 // Class instance of print id
 // attribute user.confirm = true
 // 

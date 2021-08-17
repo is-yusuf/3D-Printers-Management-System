@@ -1,4 +1,8 @@
 credentials-cal.json
 index.js
 test.js
+<<<<<<< HEAD
 node_modules/
+=======
+node_modules/*
+>>>>>>> 4cc714db5c7f4d13f3eb3534decc95f69671e79e

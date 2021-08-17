@@ -3,7 +3,6 @@ const { cal } = require("./Calender");
 const { fetchUser } = require("./OctoPrint.js")
 const { sendMail } = require('./emailer')
 const { OctoPrint } = require('./OctoPrint')
-var formidable = require('formidable');
 
 const express = require('express');
 var session = require('express-session')
@@ -23,7 +22,6 @@ app.use(express.json());
 app.use(express.static(__dirname + '/views'));
 
 
-var contentLength = require('content-length');
 
 // app.use(contentLength(function (err, len) {
 //     console.log(len);

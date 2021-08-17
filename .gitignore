@@ -2,3 +2,4 @@ credentials-cal.json
 index.js
 test.js
 node_modules/
+Gcodes/*

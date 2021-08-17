@@ -1,4 +1,3 @@
-
 let outputDiv = document.createElement('dates');
 let h3;
 window.rejectbtn = document.getElementById('reject')
@@ -10,6 +9,12 @@ document.getElementById('reject').addEventListener(('click'), () => {
     reject(acceptbtn.getAttribute('start'), acceptbtn.getAttribute('end'))
 })
 let calID;
+var script = document.createElement('script');
+script.src = 'https://code.jquery.com/jquery-3.4.1.min.js';
+script.type = 'text/javascript';
+document.getElementsByTagName('head')[0].appendChild(script);
+
+
 /**
  * Gets the values from input fields and displays the printer image
  */
@@ -186,8 +191,6 @@ function confirm(startdate, enddate) {
     }
     let files = document.querySelector("#GCode");
     sendFile(files.files[0])
-    // schedule(startdate, enddate)
-
 }
 
 function schedule(startdate, enddate) {
@@ -208,18 +211,11 @@ function schedule(startdate, enddate) {
 
 function sendFile(file) {
     const formData = new FormData();
-    formData.append('File', file);
-    let username = document.querySelector("#email").value.slice(0, document.querySelector("#email").value.indexOf("@")).toLowerCase();
-    let date = new Date(acceptbtn.getAttribute('start')).getTime()
-    formData.append('filename', username + date)
-    formData.append('milliseconds', date - ((new Date()).getTime()) - 30000 * 60)
-    formData.append('email', document.querySelector("#email").value)
-    formData.append('name', document.querySelector("#name").value)
-    let confirmation_link = `${window.window.location.href}userConfirm?event=${date}`;
-    console.log({ confirmation_link });
-    formData.append('content', `Hello ${document.querySelector("#name").value},
-Our system shows that there is a 3D-print held in queue under your name starting in 30 Minutes.
-To confirm, please click the following link. ${confirmation_link}`)
+    formData.append('file', file, "1.gcode");
+    createForm(formData);
+
+    console.log($('input[type=file]')[0].files[0]);
+
     fetch("/upload", {
         method: 'POST',
         headers: {
@@ -228,6 +224,19 @@ To confirm, please click the following link. ${confirmation_link}`)
         body: formData
     }).then(res => {
     })
+}
+
+function createForm(formData) {
+    let username = document.querySelector("#email").value.slice(0, document.querySelector("#email").value.indexOf("@")).toLowerCase();
+    let date = new Date(acceptbtn.getAttribute('start')).getTime()
+    formData.append('filename', username + date)
+    formData.append('milliseconds', date - ((new Date()).getTime()) - 30000 * 60)
+    formData.append('email', document.querySelector("#email").value)
+    formData.append('name', document.querySelector("#name").value)
+    let confirmation_link = `${window.window.location.href}userConfirm?event=${date}`;
+    formData.append('content', `Hello ${document.querySelector("#name").value},
+Our system shows that there is a 3D-print held in queue under your name starting in 30 Minutes.
+To confirm, please click the following link. ${confirmation_link}`)
 }
 
 function updateTextInput(val) {

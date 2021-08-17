@@ -3,15 +3,19 @@ const { cal } = require("./Calender");
 const { fetchUser } = require("./OctoPrint.js")
 const { sendMail } = require('./emailer')
 const { OctoPrint } = require('./OctoPrint')
+var formidable = require('formidable');
 
 const express = require('express');
 var session = require('express-session')
 const fetch = require('node-fetch');
 const multer = require('multer')
 
+
 const app = express();
 let myCalendar = new cal();
 let Octo = new OctoPrint();
+const storage = multer.memoryStorage()
+// const upload = multer({ storage: storage })
 const upload = multer({ dest: "/Gcodes" });
 
 app.use(express.urlencoded({ extended: false }));
@@ -19,18 +23,16 @@ app.use(express.json());
 app.use(express.static(__dirname + '/views'));
 
 
+var contentLength = require('content-length');
+
+// app.use(contentLength(function (err, len) {
+//     console.log(len);
+// }));
+
+
 const { saveFile } = require('./fileOperations');
 let eventsConfirmation = {}
 
-// testing();
-
-function testing() {
-
-    Octo.getPrinterStatus().then((ready) => {
-        console.log(ready);
-    })
-    Octo.selectFile("File.gcode", true)
-}
 
 
 
@@ -87,15 +89,15 @@ app.get("/userConfirm", (req, res) => {
 })
 
 
-app.post("/upload", upload.single('File'), (req, res) => {
+app.post("/upload", upload.single('file'), (req, res) => {
     // console.log("sending after" + req.body.milliseconds / 60000 + "minute")
-    // sendMail(formdata.email, formdata.name, formdata.content, formdata.milliseconds);
     formdata = { ...req.body }
-    Octo.uploadFile(req.file, formdata.filename + ".gcode")
-    // res.status(saveFile(req.file, formdata.filename + ".gcode").status)
-    // sendMail(formdata.email, formdata.name, formdata.content, 5000);
-})
+    res.status(saveFile(req.file, formdata.filename + ".gcode").status)
+    Octo.uploadFile(formdata.filename, false)
+    // sendMail(formdata.email, formdata.name, formdata.content, formdata.milliseconds);
 
+
+})
 
 app.listen(5500, () => { console.log("listening on port 5500") });
 

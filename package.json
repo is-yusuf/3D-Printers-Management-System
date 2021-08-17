@@ -22,9 +22,16 @@
   },
   "homepage": "https://github.com/is-yusuf/3D-printers-schedule#readme",
   "dependencies": {
+    "algo": "^1.0.0",
+    "child_process": "^1.0.2",
+    "content-length": "^1.0.1",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
+    "form-data": "^4.0.0",
+    "formdata-node": "^3.7.0",
+    "formidable": "^1.2.2",
     "googleapis": "^84.0.0",
+    "gzip": "^0.1.0",
     "multer": "^1.4.3",
     "node-fetch": "^2.6.1"
   }

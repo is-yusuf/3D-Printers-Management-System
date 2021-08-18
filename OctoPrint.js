@@ -28,37 +28,20 @@ exports.OctoPrint = class OctoPrint {
     print(entry) {
         console.log("Printing");
         if (!getProperty("./confirmation.json", entry, "printed") && getProperty("./confirmation.json", entry, "admin") && getProperty("./confirmation.json", entry, "user")) {
-            // let assignOptions = Object.assign(this.options);
-            // assignOptions["method"] = "POST"
 
-            // assignOptions["command"] = "select";
-            // assignOptions["print"] = true;
-            // // assignOptions["print"] = true;
-            // console.log(this.link + "api/files/local/2Print/" + entry + ".gcode")
-            // console.log(assignOptions);
+            exec(`curl -d '{"command": "select", "print": true}' -H "X-Api-Key: ${this.ApiKey}" -H "Content-Type: application/json" -X POST http://137.22.30.138/api/files/local/2Print/${entry + ".gcode"}`, (error, stdout, stderr) => {
+                if (error) {
+                    console.log(`error: ${error.message}`);
+                    return;
+                }
+                if (stderr) {
+                    console.log(`stderr: ${stderr}`);
+                    return;
+                }
+                console.log(`stdout: ${stdout}`);
+            });
 
 
-
-            fetch(this.link + "api/files/local/2Print/" + entry + ".gcode", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Api-Key': this.ApiKey,
-                    "Accept": [
-                        "*/*"
-                    ],
-                },
-                body: {
-                    command: "select",
-                    print: true
-
-                },
-                command: "select",
-                print: true
-
-            }).then(res => res.json()).then((resfinal) => {
-                console.log({ resfinal });
-            })
             // editEntry("./confirmation.json", "phy.ysf1629297000000", "admin", true)
             // // TO DO => remove file form local storage
             // return true;

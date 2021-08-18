@@ -39,14 +39,30 @@ exports.saveFile = function saveFile(file, name) {
  * @param {String} property 
  */
 
-exports.createEntry = function createEntry(filename, entry, property) {
+exports.createEntry = function createEntry(filename, entry, property, value) {
+
     let file = require(`${__dirname}/${filename}`)
     JSON.stringify(file)
     if (!file[entry]) {
         file[entry] = {}
     }
-    file[entry][property] = true;
+    file[entry][property] = value;
+    fs.writeFile(`${__dirname}/${filename}`, JSON.stringify(file, null, 2), (err) => { })
+
+}
+exports.editEntry = function editEntry(filename, entry, property, value) {
+    let file = require(`${__dirname}/${filename}`)
+    JSON.stringify(file)
+    if (file[entry] == undefined) {
+        file[entry] = {}
+    }
+
+    file[entry][property] = value;
+    if (property == "printed" && value) {
+        console.log({ file: JSON.stringify(file, null, 2) });
+    }
     fs.writeFile(`${__dirname}/${filename}`, JSON.stringify(file, null, 2), (err) => { console.error(err); })
+
 }
 /**
  * Returns the value of a property in the .json file.
@@ -58,5 +74,8 @@ exports.createEntry = function createEntry(filename, entry, property) {
 exports.getProperty = function getProperty(filename, entry, property) {
     let file = require(`${__dirname}/${filename}`)
     JSON.stringify(file);
+    if (file[entry] == undefined) {
+        return false;
+    }
     return file[entry][property]
 }

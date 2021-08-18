@@ -19,7 +19,7 @@ app.use(express.json());
 /**The root directory to serve static content from */
 app.use(express.static(__dirname + '/views'));
 
-const { saveFile, createEntry } = require('./fileOperations');
+const { saveFile, createEntry, editEntry } = require('./fileOperations');
 
 /**
  * Still under development
@@ -76,12 +76,12 @@ app.post("/schedule", (req, res) => {
 
 app.get("/userConfirm", (req, res) => {
     let event = req.query.event;
-    createEntry("./confirmation.json", event, "user")
+    editEntry("./confirmation.json", event, "user", true)
     res.send("Thanks for confirming!")
 })
 app.get("/adminconfirm", (req, res) => {
     let event = req.query.event;
-    createEntry("./confirmation.json", event, "admin")
+    editEntry("./confirmation.json", event, "admin", true)
     res.send("Thanks for confirming!")
 })
 
@@ -97,6 +97,10 @@ app.post("/upload", upload.single('file'), (req, res) => {
     formdata = { ...req.body }
     res.status(saveFile(req.file, formdata.filename + ".gcode").status)
     Octo.uploadFile(formdata.filename, false)
+
+    editEntry("./confirmation.json", formdata.filename, "admin", false)
+    editEntry("./confirmation.json", formdata.filename, "user", false)
+    editEntry("./confirmation.json", formdata.filename, "printed", false)
     // sendMail(formdata.email, formdata.name, formdata.content, formdata.milliseconds);
 })
 

@@ -191,8 +191,13 @@ function confirm(startdate, enddate) {
     }
     let files = document.querySelector("#GCode");
     sendFile(files.files[0])
+    // schedule(startdate,enddate);
 }
-
+/**
+ * Schedules an event between start and end dates
+ * @param {String or Date} startdate 
+ * @param {String or Date} enddate 
+ */
 function schedule(startdate, enddate) {
     let reqbody = { start: new Date(startdate), end: new Date(enddate) }
 
@@ -212,29 +217,23 @@ function schedule(startdate, enddate) {
 function sendFile(file) {
     const formData = new FormData();
     formData.append('file', file, "1.gcode");
-    createForm(formData);
-
-    fetch("/upload", {
-        method: 'POST',
-        headers: {
-            // "Content-Type": "multipart/form-data"
-        },
-        body: formData
-    }).then(res => {
-    })
-}
-
-function createForm(formData) {
     let username = document.querySelector("#email").value.slice(0, document.querySelector("#email").value.indexOf("@")).toLowerCase();
     let date = new Date(acceptbtn.getAttribute('start')).getTime()
     formData.append('filename', username + date)
     formData.append('milliseconds', date - ((new Date()).getTime()) - 30000 * 60)
     formData.append('email', document.querySelector("#email").value)
     formData.append('name', document.querySelector("#name").value)
-    let confirmation_link = `${window.window.location.href}userConfirm?event=${date}`;
+    let confirmation_link = `${window.window.location.href}userConfirm?event=${username + date}`;
     formData.append('content', `Hello ${document.querySelector("#name").value},
 Our system shows that there is a 3D-print held in queue under your name starting in 30 Minutes.
 To confirm, please click the following link. ${confirmation_link}`)
+    fetch("/upload", {
+        method: 'POST',
+        headers: {
+        },
+        body: formData
+    }).then(res => {
+    })
 }
 
 function updateTextInput(val) {

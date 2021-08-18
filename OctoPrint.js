@@ -4,6 +4,7 @@ const { exec } = require("child_process");
 
 const { FormData } = require('formdata-node');
 const fs = require('fs')
+const { createEntry, getProperty } = require("./fileOperations")
 exports.OctoPrint = class OctoPrint {
 
     constructor() {
@@ -17,7 +18,28 @@ exports.OctoPrint = class OctoPrint {
                 'X-Api-Key': this.ApiKey
             },
         }
+        this.adminconfirm = false;
+        this.userconfirm = false;
 
+    }
+    /**
+     * Prints a file in the local storage in 2Print folder.
+     * @param {String} filename the filename to print. 
+     * @returns {Boolean} true if mission successful, false otherwise.
+     */
+    print(filename) {
+        if (this.adminconfirm && this.adminconfirm && !getProperty("./confirmation.json", filename, "printed")) {
+            let assignOptions = Object.assign(this.options);
+            assignOptions["command"] = "select";
+            assignOptions["print"] = true;
+            fetch(this.link + "api/files/local/2Print/" + filename, assignOptions).then(res => res.json()).then((resfinal) => {
+                console.log(resfinal);
+            })
+            createEntry(filename, "printed", true)
+            // TO DO => remove file form local storage
+            return true;
+        }
+        return false;
     }
     /**
      * 
@@ -32,12 +54,6 @@ exports.OctoPrint = class OctoPrint {
             })
     }
 
-    selectFile(name, print) {
-        let assignOptions = Object.assign(this.options);
-        assignOptions["command"] = "select";
-        assignOptions["print"] = print;
-        fetch(this.link + "api/files/sdcard/toPrint" + name, assignOptions)
-    }
     /**
      * Uploads a file from the folder Gcodes to OctoPrint server.
      * @param {String} file The string of the file name. Accepts both ending with .gcode or not.
@@ -49,7 +65,7 @@ exports.OctoPrint = class OctoPrint {
         if (!file.includes(".gcode")) {
             file += ".gcode"
         }
-        exec(`curl file -k -H "X-Api-Key: ${this.ApiKey}" -F "print=${print}" -F "file=@C:/Users/phyys/Desktop/Mkr/form/Gcodes/${file}" "http://137.22.30.138/api/files/local"`, (error, stdout, stderr) => {
+        exec(`curl -k -H "X-Api-Key: ${this.ApiKey}" -F "print=${print}" -F "file=@C:/Users/phyys/Desktop/Mkr/form/Gcodes/${file} path="2Print" "http://137.22.30.138/api/files/local"`, (error, stdout, stderr) => {
             if (error) {
                 // console.log(`error: ${error.message}`);
                 return;
@@ -79,7 +95,3 @@ exports.OctoPrint = class OctoPrint {
     }
 }
 
-
-// Class instance of print id
-// attribute user.confirm = true
-// 

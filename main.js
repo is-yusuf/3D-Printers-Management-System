@@ -20,7 +20,7 @@ app.use(express.json());
 /**The root directory to serve static content from */
 app.use(express.static(__dirname + '/views'));
 
-const { saveFile, createEntry, editEntry } = require('./fileOperations');
+const { saveFile, editEntry } = require('./fileOperations');
 
 /**
  * Still under development
@@ -76,19 +76,25 @@ app.post("/schedule", (req, res) => {
 })
 
 
-app.get("/userConfirm", (req, res) => {
-    let event = req.query.event;
+app.get("/userconfirm", (req, res) => {
+    let id = req.query.id;
     editEntry("./confirmation.json", event, "user", true)
     res.send("Thanks for confirming!")
+    let arrOfValues = id.split("_");
     io.emit('userConfirmed', {
-        paragraph: "Placeholder for paragraph",
-        id: event
+        paragraph: `Username : ${arrOfValues[0]}
+Date : ${new Date(arrOfValues[1])}
+Material : ${arrOfValues[2]}
+Printer : ${arrOfValues[3]}`,
+        id: id
     })
 })
-app.get("/adminconfirm", (req, res) => {
-    let event = req.query.event;
-    editEntry("./confirmation.json", event, "admin", true)
-    res.send("Thanks for confirming!")
+
+app.post("/adminconfirm", (req, res) => {
+    // console.log("received request to confirm admin");
+    // console.log({ reqbody: req.body });
+    editEntry("./confirmation.json", req.body.id, "admin", true)
+    Octo.print(req.body.id)
 })
 
 /**
@@ -111,8 +117,10 @@ app.post("/upload", upload.single('file'), (req, res) => {
 })
 
 
-const server = app.listen(5500, () => { console.log("listening on port 5500") });
-
+// const server = app.listen(5500, () => { console.log("listening on port 5500") });
+app.get("/admin", (req, res) => {
+    res.sendFile(__dirname + "/views/admin.html")
+})
 
 let io = socket(server);
 io.on("connection", (socket) => {

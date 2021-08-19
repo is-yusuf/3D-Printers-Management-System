@@ -37,5 +37,13 @@ function reject(id) {
     console.log(`going to reject this ${id}`);
 }
 function accept(id) {
-    console.log(`going to accept this ${id}`);
+    fetch('/adminconfirm', {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: "POST",
+        body: JSON.stringify({
+            id: id,
+        })
+    })
 }

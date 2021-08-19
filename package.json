@@ -26,6 +26,7 @@
     "edit-json-file": "^1.6.0",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
+    "ffmetadata": "^1.7.0",
     "formdata-node": "^3.7.0",
     "googleapis": "^84.0.0",
     "multer": "^1.4.3",

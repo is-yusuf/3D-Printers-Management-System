@@ -1,6 +1,6 @@
 const { content } = require('googleapis/build/src/apis/content');
 const fetch = require('node-fetch');
-const credentials = require("./views/assets/credentials-cal.json")
+const credentials = require("./credentials-cal.json")
 exports.sendMail = function sendMail(email, name, content, milliseconds) {
     // console.log({ email, name, content, milliseconds });
     fetch("https://api.sendgrid.com/v3/mail/send", {

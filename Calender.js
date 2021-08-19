@@ -1,5 +1,5 @@
 const { google } = require('googleapis');
-const credentials = require("./views/assets/credentials-cal.json")
+const credentials = require("./credentials-cal.json")
 class cal {
     constructor() {
 

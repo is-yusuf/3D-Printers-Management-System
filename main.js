@@ -11,6 +11,7 @@ const app = express();
 let myCalendar = new cal();
 let Octo = new OctoPrint();
 const upload = multer({ dest: "Gcodes/" });
+const socket = require("socket.io");
 
 /**Used for encoding parameters in the link sent to the users and admins to condirm print */
 app.use(express.urlencoded({ extended: false }));
@@ -74,10 +75,15 @@ app.post("/schedule", (req, res) => {
     }
 })
 
+
 app.get("/userConfirm", (req, res) => {
     let event = req.query.event;
     editEntry("./confirmation.json", event, "user", true)
     res.send("Thanks for confirming!")
+    io.emit('userConfirmed', {
+        paragraph: "Placeholder for paragraph",
+        id: event
+    })
 })
 app.get("/adminconfirm", (req, res) => {
     let event = req.query.event;
@@ -86,7 +92,7 @@ app.get("/adminconfirm", (req, res) => {
 })
 
 /**
- * Saves a file to /Gcodes and uploads it to local/2Print in the OctoPrint server. request.body should be a FormData object with
+* Saves a file to /Gcodes and uploads it to local/2Print in the OctoPrint server. request.body should be a FormData object with
  *  fields
  *  file: being the file captured from input field file
  * filename: the file name to be saves as without .gcode
@@ -105,10 +111,13 @@ app.post("/upload", upload.single('file'), (req, res) => {
 })
 
 
-app.listen(5500, () => { console.log("listening on port 5500") });
+const server = app.listen(5500, () => { console.log("listening on port 5500") });
 
 
-
+let io = socket(server);
+io.on("connection", (socket) => {
+    console.log(`made socket connection to ${socket.id}`);
+})
 
 
 

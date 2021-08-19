@@ -1,0 +1,19 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    margin: 0 auto;    
+    align-items: center;
+}
+.ticket{
+    align-items: center;
+    width: 50%;
+}
+.paragraph{
+    width: 100%;
+    text-align: center;
+
+}
+.buttons{
+    text-align: center;
+}

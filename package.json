@@ -29,6 +29,7 @@
     "formdata-node": "^3.7.0",
     "googleapis": "^84.0.0",
     "multer": "^1.4.3",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "socket.io": "^4.1.3"
   }
 }

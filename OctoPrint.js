@@ -101,6 +101,3 @@ exports.OctoPrint = class OctoPrint {
             })
     }
 }
-
-let Octo = new this.OctoPrint;
-Octo.print("phy.ysf1629297000000");

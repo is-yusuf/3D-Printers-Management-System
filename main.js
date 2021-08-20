@@ -78,7 +78,7 @@ app.post("/schedule", (req, res) => {
 
 app.get("/userconfirm", (req, res) => {
     let id = req.query.id;
-    editEntry("./confirmation.json", event, "user", true)
+    editEntry("./confirmation.json", id, "user", true)
     res.send("Thanks for confirming!")
     let arrOfValues = id.split("_");
     io.emit('userConfirmed', {
@@ -110,14 +110,14 @@ app.post("/upload", upload.single('file'), (req, res) => {
     res.status(saveFile(req.file, formdata.filename + ".gcode").status)
     Octo.uploadFile(formdata.filename, false)
 
-    editEntry("./confirmation.json", formdata.filename, "admin", false)
-    editEntry("./confirmation.json", formdata.filename, "user", false)
-    editEntry("./confirmation.json", formdata.filename, "printed", false)
+    editEntry("./confirmation.json", formdata.filename + ".gcode", "admin", false)
+    editEntry("./confirmation.json", formdata.filename + ".gcode", "user", false)
+    editEntry("./confirmation.json", formdata.filename + ".gcode", "printed", false)
     // sendMail(formdata.email, formdata.name, formdata.content, formdata.milliseconds);
 })
 
 
-// const server = app.listen(5500, () => { console.log("listening on port 5500") });
+const server = app.listen(5500, () => { console.log("listening on port 5500") });
 app.get("/admin", (req, res) => {
     res.sendFile(__dirname + "/views/admin.html")
 })

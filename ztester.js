@@ -1,5 +1,5 @@
 const { OctoPrint } = require('./OctoPrint')
 const { changeProperty } = require("./fileOperations")
-changeProperty("phy.ysf1629297000000.gcode")
-// let Octo = new OctoPrint()
-// Octo.getInfo("phy.ysf1629297000000.gcode")
+// changeProperty("phy.ysf1629297000000.gcode")
+let Octo = new OctoPrint()
+Octo.print("ismaily_1629487800000_PLA_miniv2.gcode")

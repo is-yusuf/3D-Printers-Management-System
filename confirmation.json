@@ -1,17 +1,7 @@
 {
-  "phy.ysf1629297000000": {
-    "admin": true,
+  "ismaily_1629487800000_PLA_miniv2.gcode": {
     "user": true,
-    "printed": false
-  },
-  "ismaily,1629381600000,PLA": {
-    "admin": false,
-    "user": false,
-    "printed": false
-  },
-  "ismaily_1629381600000_PLA": {
-    "admin": false,
-    "user": false,
+    "admin": true,
     "printed": false
   }
 }

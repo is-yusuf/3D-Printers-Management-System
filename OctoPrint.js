@@ -30,10 +30,13 @@ exports.OctoPrint = class OctoPrint {
         if (!entry.includes(".gcode")) {
             entry += ".gcode"
         }
+        console.log(entry
+        );
+        console.log((getProperty("./confirmation.json", entry, "user")));
         if (!getProperty("./confirmation.json", entry, "printed") && getProperty("./confirmation.json", entry, "admin") && getProperty("./confirmation.json", entry, "user")) {
 
             fetch(`${this.link}api/files/local/2Print/${entry}`, {
-
+                method: "POST",
                 headers: {
                     "X-Api-Key": this.ApiKey,
                     "Content-Type": "application/json"
@@ -44,10 +47,10 @@ exports.OctoPrint = class OctoPrint {
                 })
 
 
-            })
+            }).then(res => console.log(res))
             //IF  THE ABOVE IS NOT WORKING, UNCOMMENT THIS PART AND RUN ON LINUX ONLY
 
-            // exec(`curl -d '{"command": "select", "print": true}' -H "X-Api-Key: ${this.ApiKey}" -H "Content-Type: application/json" -X POST http://137.22.30.138/api/files/local/2Print/${entry + ".gcode"}`, (error, stdout, stderr) => {
+            // exec(`curl -d '{"command": "select", "print": true}' -H "X-Api-Key: ${this.ApiKey}" -H "Content-Type: application/json" -X POST http://137.22.30.138/api/files/local/2Print/${entry}`, (error, stdout, stderr) => {
             //     if (error) {
             //         console.log(`error: ${error.message}`);
             //         return;

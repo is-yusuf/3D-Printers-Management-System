@@ -52,12 +52,25 @@
                         <option value="PETG"> PETG </option>
                         <option value="TPM"> TPM </option>
                         <option value="ABS"> ABS </option>
-
                     </select>
                 </div>
                 <div class="precesion">
                     <label for="prec">precesion level</label>
                     <input type="range" name=prec min=1 max=3 step=1 id="prec">
+                </div>
+                <div class=color>
+                    <label for="color">Color</label>
+                    <select name="color" id="color">
+                        <option value="any" checked> Doesn't matter </option>
+                        <option value="red"> Red </option>
+                        <option value="blue"> Blue </option>
+                        <option value="orange"> Orange </option>
+                        <option value="grey"> Grey </option>
+                        <option value="grean"> Green </option>
+                        <option value="yellow"> Yellow </option>
+                        <option value="purple"> Purple </option>
+                        <option value="clear"> Clear </option>
+                    </select>
                 </div>
                 <button type="button" id="submit" onclick="DisplayResults()">submit</button>
 

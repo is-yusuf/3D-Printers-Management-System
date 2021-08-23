@@ -3,7 +3,7 @@ const { cal } = require("./Calender");
 const { fetchUser } = require("./OctoPrint.js")
 const { sendMail } = require('./emailer')
 const { OctoPrint } = require('./OctoPrint')
-const confirmation = require("./confirmation.json")
+const credentials = require("./credentials-cal.json")
 const express = require('express');
 var session = require('express-session')
 const multer = require('multer')
@@ -20,7 +20,7 @@ app.use(express.json());
 /**The root directory to serve static content from */
 app.use(express.static(__dirname + '/views'));
 
-const { saveFile, editEntry } = require('./fileOperations');
+const { saveFile, deleteFile } = require('./fileOperations');
 
 /**
  * Still under development
@@ -78,22 +78,20 @@ app.post("/schedule", (req, res) => {
 
 app.get("/userconfirm", (req, res) => {
     let id = req.query.id;
-    editEntry("./confirmation.json", id, "user", true)
     res.send("Thanks for confirming!")
     let arrOfValues = id.split("_");
     io.emit('userConfirmed', {
         paragraph: `Username : ${arrOfValues[0]}
 Date : ${new Date(arrOfValues[1])}
 Material : ${arrOfValues[2]}
-Printer : ${arrOfValues[3]}`,
+Printer : ${arrOfValues[3]}
+duration : ${arrOfValues[4]}
+color : ${arrOfValues[5]}`,
         id: id
     })
 })
 
 app.post("/adminconfirm", (req, res) => {
-    // console.log("received request to confirm admin");
-    // console.log({ reqbody: req.body });
-    editEntry("./confirmation.json", req.body.id, "admin", true)
     Octo.print(req.body.id)
 })
 
@@ -105,28 +103,72 @@ app.post("/adminconfirm", (req, res) => {
  * milliseconds: the number of milliseconds to send the confirmation email to the user
  */
 app.post("/upload", upload.single('file'), (req, res) => {
-    // console.log("sending after" + req.body.milliseconds / 60000 + "minute")
     formdata = { ...req.body }
     res.status(saveFile(req.file, formdata.filename + ".gcode").status)
     Octo.uploadFile(formdata.filename, false)
-
-    editEntry("./confirmation.json", formdata.filename + ".gcode", "admin", false)
-    editEntry("./confirmation.json", formdata.filename + ".gcode", "user", false)
-    editEntry("./confirmation.json", formdata.filename + ".gcode", "printed", false)
-    // sendMail(formdata.email, formdata.name, formdata.content, formdata.milliseconds);
+    setTimeout(() => {
+        deleteFile(formdata.filename)
+    }, 60000);
+    // sendMail(formdata.email,  formdata.content,formdata.name, formdata.milliseconds);
 })
 
+app.route('/admin')
+    .get((req, res) => {
+        res.sendFile(__dirname + "/views/admin.html")
+    })
+    .delete((req, res) => {
+        try {
+            // console.log(req.body);
+            Octo.deleteFile(req.body.id)
+            sendMail(req.body.split("_")[0] + "@carleton.edu", "Your print job has been cancelled by MakerSpace admin.")
+            res.status(200)
 
+        }
+        catch {
+            res.status(500)
+        }
+    })
+
+app.post('/webhook', (req, res) => {
+    console.log(req.body);
+    io.emit("updateStatus", {
+        printer: req.body.deviceIdentifier,
+        file: req.body.extra.name,
+        precentage: req.body.progress.completion,
+        timeLeft: req.body.progress.printTimeLeft
+    })
+    res.send("req")
+})
+
+app.post('/job', (req, res) => {
+    Octo.jobCommand(req.body.printer, req.body.command)
+    res.send("Successful")
+})
+
+app.post('/jobdone', (req, res) => {
+    let email = req.body.job.file.name.split('_')[0];
+    sendMail(email, `Your print job using ${req.body.deviceIdentifier} is done`)
+    Octo.deleteFile(req.body.file.name)
+})
+
+// app.route('/job')
 const server = app.listen(5500, () => { console.log("listening on port 5500") });
-app.get("/admin", (req, res) => {
-    res.sendFile(__dirname + "/views/admin.html")
-})
 
 let io = socket(server);
 io.on("connection", (socket) => {
     console.log(`made socket connection to ${socket.id}`);
 })
 
+
+io.use((socket, next) => {
+    const password = socket.handshake.auth.password;
+    if (password == credentials.password) {
+        next()
+    }
+    else {
+        return next(new Error("invalid password"))
+    }
+});
 
 
 

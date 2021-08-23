@@ -34,34 +34,15 @@ exports.saveFile = function saveFile(file, name) {
 }
 /**
  * 
- * @param {String} filename the database file name including the .json at the end. 
- * @param {String} entry th
- * @param {String} property 
+ * @param {String} name The file name to be deleted with or without .gcode at the end. 
  */
-
-exports.editEntry = function editEntry(filename, entry, property, value) {
-    // console.log(`editing entry : ${entry} property:${property}`);
-    let file = require(`${__dirname}/${filename}`)
-    JSON.stringify(file)
-    if (file[entry] == undefined) {
-        file[entry] = {}
+exports.deleteFile = function deleteFile(name) {
+    if (!name.includes(".gcode")) {
+        name += ".gcode"
     }
-
-    file[entry][property] = value;
-    fs.writeFile(`${__dirname}/${filename}`, JSON.stringify(file, null, 2), (err) => { console.error(err); })
-}
-/**
- * Returns the value of a property in the .json file.
- * @param {String} filename database filename of the .JSON file including .json at the end. 
- * @param {String} entry the .gcode file name without .gcode at the end
- * @param {String} property the property of the .gcode file (printer, admin, user)
- * @returns 
- */
-exports.getProperty = function getProperty(filename, entry, property) {
-    let file = require(`${__dirname}/${filename}`)
-    JSON.stringify(file);
-    if (file[entry] == undefined) {
-        return false;
-    }
-    return file[entry][property]
+    fs.unlink(__dirname + "/Gcodes/" + name, err => {
+        if (err) {
+            console.error(err);
+        }
+    })
 }

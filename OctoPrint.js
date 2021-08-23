@@ -1,20 +1,17 @@
 const fetch = require('node-fetch');
 const credentials = require("./credentials-cal.json")
 const { exec } = require("child_process");
-
 const { FormData } = require('formdata-node');
 const fs = require('fs')
-const { createEntry, getProperty, editEntry } = require("./fileOperations")
 exports.OctoPrint = class OctoPrint {
 
     constructor() {
-        this.link = "http://137.22.30.138/"
+        this.link = `http://${credentials.octoIP}/`
         this.ApiKey = credentials['X-Api-Key'];
         this.options = {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Content-Length': 300,
                 'X-Api-Key': this.ApiKey
             },
         }
@@ -30,44 +27,38 @@ exports.OctoPrint = class OctoPrint {
         if (!entry.includes(".gcode")) {
             entry += ".gcode"
         }
-        console.log(entry
-        );
-        console.log((getProperty("./confirmation.json", entry, "user")));
-        if (!getProperty("./confirmation.json", entry, "printed") && getProperty("./confirmation.json", entry, "admin") && getProperty("./confirmation.json", entry, "user")) {
-
-            fetch(`${this.link}api/files/local/2Print/${entry}`, {
-                method: "POST",
-                headers: {
-                    "X-Api-Key": this.ApiKey,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    command: "select",
-                    print: true
-                })
+        fetch(`${this.link}api/files/local/2Print/${entry}`, {
+            method: "POST",
+            headers: {
+                "X-Api-Key": this.ApiKey,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                command: "select",
+                print: true
+            })
 
 
-            }).then(res => console.log(res))
-            //IF  THE ABOVE IS NOT WORKING, UNCOMMENT THIS PART AND RUN ON LINUX ONLY
+        }).then(res => console.log(res))
+        //IF  THE ABOVE IS NOT WORKING, UNCOMMENT THIS PART AND RUN ON LINUX ONLY
 
-            // exec(`curl -d '{"command": "select", "print": true}' -H "X-Api-Key: ${this.ApiKey}" -H "Content-Type: application/json" -X POST http://137.22.30.138/api/files/local/2Print/${entry}`, (error, stdout, stderr) => {
-            //     if (error) {
-            //         console.log(`error: ${error.message}`);
-            //         return;
-            //     }
-            //     if (stderr) {
-            //         console.log(`stderr: ${stderr}`);
-            //         return;
-            //     }
-            //     console.log(`stdout: ${stdout}`);
-            // });
+        // exec(`curl -d '{"command": "select", "print": true}' -H "X-Api-Key: ${this.ApiKey}" -H "Content-Type: application/json" -X POST http://137.22.30.138/api/files/local/2Print/${entry}`, (error, stdout, stderr) => {
+        //     if (error) {
+        //         console.log(`error: ${error.message}`);
+        //         return;
+        //     }
+        //     if (stderr) {
+        //         console.log(`stderr: ${stderr}`);
+        //         return;
+        //     }
+        //     console.log(`stdout: ${stdout}`);
+        // });
 
 
-            // editEntry("./confirmation.json", "phy.ysf1629297000000", "admin", true)
-            // // TO DO => remove file form local storage
-            // return true;
-        }
-        return false;
+        // editEntry("./confirmation.json", "phy.ysf1629297000000", "admin", true)
+        // // TO DO => remove file form local storage
+        // return true;
+        // return false;
     }
     /**
      * 
@@ -123,9 +114,12 @@ exports.OctoPrint = class OctoPrint {
     }
     /**
      * 
-     * @param {String} filename The filename to delete inside local/2Print including the .gcode at the end. 
+     * @param {String} filename The filename to delete inside local/2Print including/not including the .gcode at the end. 
      */
     deleteFile(filename) {
+        if (!file.includes(".gcode")) {
+            file += ".gcode"
+        }
         fetch(`${this.link}api/files/local/2Print/${filename}`, {
             headers: {
                 'X-Api-Key': this.ApiKey
@@ -151,6 +145,43 @@ exports.OctoPrint = class OctoPrint {
                 printDuration: res.gcodeAnalysis.estimatedPrintTime
 
             }
+        })
+    }
+    /**
+     * 
+     * @param {String} printer The printer name (Balin, Dwalin, Prusa, Taz4, Taz6)
+     * @param {String} command The String of the job command (start - cancel - resume - pause - restart)
+    
+     */
+    jobCommand(printer, command) {
+        let ip = credentials[printer];
+        fetch(`http://${ip}/api/job`, {
+            mathod: "POST",
+            headers: {
+                "X-Api-Key": this.ApiKey,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                command: command,
+                action: command
+            })
+        }).then(res => res.json()).then(resfinal => {
+            console.log(resfinal);
+        })
+    }
+    /**
+     * 
+     * @returns response body containing current state of printer
+     */
+    getJob() {
+        return fetch(`http://${this.octoIP}/api/job`, {
+            mathod: "GET",
+            headers: {
+                "X-Api-Key": this.ApiKey,
+                "Content-Type": "application/json"
+            },
+        }).then(res => res.body.json()).then(resfinal => {
+            return resfinal
         })
     }
 }

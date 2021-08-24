@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin console</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="shortcut icon" href="#">
+    <link rel=Stylesheet type="text/css" href="style2.css">
+
+</head>
+
+<body>
+    <div class="container">
+        <input type="password" name="password" id="password">
+        <button onclick="connect(document.querySelector('#password').value)">Connect</button>
+    </div>
+    <div class=container>
+        <div class=ticket>
+            <div class=paragraph>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat sapiente eius quisquam explicabo
+                beatae
+                expedita mollitia eveniet animi consequatur vitae!
+            </div>
+            <div class=buttons>
+                <button printer=miniv2 id=.gcode>Accept</button>
+                <button printer=miniv2 id=.gcode>Reject</button>
+            </div>
+        </div>
+    </div>
+    <div class=container>
+        <div class=Balin>
+            <h3 class=file>File : </h3>
+            <h3 class="precentage">Precentage : </h3>
+            <h3 class="timeLeft">TimeLeft : </h3>
+            <div class="Action-Buttons">
+                <button printer=Balin onclick="job(this)">Pause</button>
+                <button printer=Balin onclick="job(this)">Resume</button>
+                <button printer=Balin onclick="job(this)">Cancel</button>
+                <button printer=Balin onclick="job(this)">Restart</button>
+            </div>
+        </div>
+        <div class=Dwalin>
+            <h3 class=file>File : </h3>
+            <h3 class="precentage">Precentage : </h3>
+            <h3 class="timeLeft">TimeLeft : </h3>
+            <div class="Action-Buttons">
+                <button printer=Dwalin onclick="job(this)">Pause</button>
+                <button printer=Dwalin onclick="job(this)">Resume</button>
+                <button printer=Dwalin onclick="job(this)">Cancel</button>
+                <button printer=miniv22 onclick="job(this)">Restart</button>
+            </div>
+        </div>
+        <div class=Prusa>
+            <h3 class=file>File : </h3>
+            <h3 class="precentage">Precentage : </h3>
+            <h3 class="timeLeft">TimeLeft : </h3>
+            <div class="Action-Buttons">
+                <button printer=prusa onclick="job(this)">Pause</button>
+                <button printer=prusa onclick="job(this)">Resume</button>
+                <button printer=prusa onclick="job(this)">Cancel</button>
+                <button printer=prusa onclick="job(this)">Restart</button>
+            </div>
+        </div>
+        <div class=Taz4>
+            <h3 class=file>File : </h3>
+            <h3 class="precentage">Precentage : </h3>
+            <h3 class="timeLeft">TimeLeft : </h3>
+            <div class="Action-Buttons">
+                <button printer=taz4 onclick="job(this)">Pause</button>
+                <button printer=taz4 onclick="job(this)">Resume</button>
+                <button printer=taz4 onclick="job(this)">Cancel</button>
+                <button printer=taz4 onclick="job(this)">Restart</button>
+            </div>
+        </div>
+        <div class=Taz6>
+            <h3 class=file>File : </h3>
+            <h3 class="precentage">Precentage : </h3>
+            <h3 class="timeLeft">TimeLeft : </h3>
+            <div class="Action-Buttons">
+                <button printer=taz6 onclick="job(this)">Pause</button>
+                <button printer=taz6 onclick="job(this)">Resume</button>
+                <button printer=taz6 onclick="job(this)">Cancel</button>
+                <button printer=taz6 onclick="job(this)">Restart</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./Adminscripts.js" defer></script>
+</body>
+
+</html>

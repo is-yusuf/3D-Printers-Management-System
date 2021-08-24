@@ -9,10 +9,6 @@ document.getElementById('reject').addEventListener(('click'), () => {
     reject(acceptbtn.getAttribute('start'), acceptbtn.getAttribute('end'))
 })
 let calID;
-var script = document.createElement('script');
-script.src = 'https://code.jquery.com/jquery-3.4.1.min.js';
-script.type = 'text/javascript';
-document.getElementsByTagName('head')[0].appendChild(script);
 
 
 /**
@@ -53,11 +49,11 @@ function enableInputs() {
  */
 function choosePrinter(material, size, prec) {
 
-    let balin = { src: "./assets/imgs/balin.jpg", Link: "dwalin.make-it.cc", text: "miniv2", calID: "c_3jgvbprejl4t77q38a2k3obs0c@group.calendar.google.com" }
-    let dwalin = { src: "./assets/imgs/miniv2.jpg", Link: "dwalin.make-it.cc", text: "miniv2", calID: "c_ed1lt228ffjpd5sdgc0uamprg4@group.calendar.google.com" }
-    let thorin = { src: "./assets/imgs/prusa.jpg", Link: "dwalin.make-it.cc", text: "prusa", calID: "c_sjipjk55n0kjfkdl3kl3i0bqoo@group.calendar.google.com" }
-    let fili = { src: "./assets/imgs/taz4.jpg", Link: "dwalin.make-it.cc", text: "taz4", calID: "c_nldd7mhr8ip3kb9apg7aerb634@group.calendar.google.com" }
-    let kili = { src: "./assets/imgs/taz6.jpg", Link: "dwalin.make-it.cc", text: "taz6", calID: "c_gu67pim474cml15g40j0r8ni9k@group.calendar.google.com" }
+    let balin = { src: "./assets/imgs/Balin.jpg", Link: "dwalin.make-it.cc", text: "Balin", calID: "c_3jgvbprejl4t77q38a2k3obs0c@group.calendar.google.com" }
+    let dwalin = { src: "./assets/imgs/Dwalin.jpg", Link: "dwalin.make-it.cc", text: "Dwalin", calID: "c_ed1lt228ffjpd5sdgc0uamprg4@group.calendar.google.com" }
+    let thorin = { src: "./assets/imgs/Prusa.jpg", Link: "dwalin.make-it.cc", text: "Prusa", calID: "c_sjipjk55n0kjfkdl3kl3i0bqoo@group.calendar.google.com" }
+    let fili = { src: "./assets/imgs/Taz4.jpg", Link: "dwalin.make-it.cc", text: "Taz4", calID: "c_nldd7mhr8ip3kb9apg7aerb634@group.calendar.google.com" }
+    let kili = { src: "./assets/imgs/Taz6.jpg", Link: "dwalin.make-it.cc", text: "Taz6", calID: "c_gu67pim474cml15g40j0r8ni9k@group.calendar.google.com" }
 
     if (size == "more9") {
         if (prec == 1) {
@@ -219,11 +215,11 @@ function sendFile(file) {
     formData.append('file', file, "1.gcode");
     let username = document.querySelector("#email").value.slice(0, document.querySelector("#email").value.indexOf("@")).toLowerCase();
     let date = new Date(acceptbtn.getAttribute('start')).getTime()
-    formData.append('filename', username + date)
+    formData.append('filename', username + "_" + date + "_" + document.querySelector("#material").value + "_" + document.querySelector("#printer").innerHTML + "_" + document.querySelector("#duration").value + "_" + document.querySelector("#color").value)
     formData.append('milliseconds', date - ((new Date()).getTime()) - 30000 * 60)
     formData.append('email', document.querySelector("#email").value)
     formData.append('name', document.querySelector("#name").value)
-    let confirmation_link = `${window.window.location.href}userConfirm?event=${username + date}`;
+    let confirmation_link = `${window.window.location.href}userConfirm?id=${username + "_" + date + "_" + document.querySelector("#material").value + "_" + document.querySelector("#printer").innerHTML + "_" + document.querySelector("#duration").value + "_" + document.querySelector("#color").value}`;
     formData.append('content', `Hello ${document.querySelector("#name").value},
 Our system shows that there is a 3D-print held in queue under your name starting in 30 Minutes.
 To confirm, please click the following link. ${confirmation_link}`)

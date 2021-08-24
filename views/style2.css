@@ -1,0 +1,29 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    Min-width: 50%;
+    Max-width: 80%;
+
+    margin: .5em auto;    
+    align-items: center;
+    border:     2px black solid ;
+}
+.ticket{
+    align-items: center;
+    Min-width: 50%;
+    Max-width: 80%;
+}
+.paragraph{
+    width: 100%;
+    text-align: center;
+
+}
+.buttons{
+    text-align: center;
+}
+
+* {
+    margin: .5em;
+    padding: .5em;
+
+}

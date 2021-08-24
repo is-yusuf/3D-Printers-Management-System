@@ -23,5 +23,7 @@ In order to run the program, you need to have Node.js installed and from then yo
 	    "octoIP": The IP address of the OctoPrint server.
     }
   3- Create Gcodes file in the home directory to temporarily store the Gcodes before uploading them.
+  
+  Note: If you are going to manage multiple printers, it's advised to use device identifiers from OctoPrint server and to associate each printer with its IP address in the ``credentials-cal.json``.
 
   For any questions, don't hesitate to open an issue on the repository or email me at ismaily@carleton.edu .
